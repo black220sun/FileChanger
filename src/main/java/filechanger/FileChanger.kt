@@ -11,11 +11,14 @@ class FileChanger {
 
     fun load() {
         init()
-//        init(replacement, replacementPath)
+        init(replacement, replacementPath)
     }
 
     fun init(provider: HashMap<String, String> = translation, path: String = translationPath) {
-        val reader = FileReader(path)
+        val file = File(path)
+        if (!file.exists())
+            return
+        val reader = FileReader(file)
         reader.readLines().filter { it.matches("[^;]+;[^;]+".toRegex()) }.forEach {
             val entry = it.split(';')
             add(entry[0], entry[1], provider)
