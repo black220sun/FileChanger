@@ -76,7 +76,7 @@ class FileChangerTest {
         val dir = File("AlisA")
         dir.mkdir()
 
-        val new = changer.move(file, "/home/blacksun/IdeaProjects/FileChanger/AlisA")
+        val new = changer.move(file, "${System.getProperty("user.home")}/IdeaProjects/FileChanger/AlisA")
 
         assertEquals(true, new.exists())
         assertEquals(false, file.exists())
