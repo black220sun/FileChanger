@@ -6,6 +6,7 @@ import java.io.FileReader
 class FileChanger {
     private val translation = LinkedHashMap<String, String>()
     private val replacement = LinkedHashMap<String, String>()
+    private val delimiterCSV = ','
     private val translationPath = "translate.csv"
     private val replacementPath = "replace.csv"
 
@@ -22,8 +23,8 @@ class FileChanger {
         if (!file.exists())
             return
         val reader = FileReader(file)
-        reader.readLines().filter { it.matches("[^;]+;[^;]+".toRegex()) }.forEach {
-            val entry = it.split(';')
+        reader.readLines().filter { it.matches("[^;]+$delimiterCSV[^;]+".toRegex()) }.forEach {
+            val entry = it.split(delimiterCSV)
             add(entry[0], entry[1], provider)
         }
         reader.close()
