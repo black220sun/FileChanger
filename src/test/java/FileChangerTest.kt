@@ -131,4 +131,20 @@ class FileChangerTest {
 
         new.delete()
     }
+    @Test
+    fun renameRegexTest() {
+        val file = File("AlisA_-_Rodina_(zf.fm).mp3")
+        file.createNewFile()
+        val changer = FileChanger()
+        changer.addRegex("_", " ")
+        changer.addRegex(" \\(.*\\)", "")
+
+        val new = changer.rename(file, true)
+
+        assertTrue(new.exists())
+        assertEquals("AlisA - Rodina.mp3", new.name)
+        assertFalse(file.exists())
+
+        new.delete()
+    }
 }

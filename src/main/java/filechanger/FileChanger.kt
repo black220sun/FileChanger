@@ -6,9 +6,11 @@ import java.io.FileReader
 class FileChanger {
     private val translation = LinkedHashMap<String, String>()
     private val replacement = LinkedHashMap<String, String>()
+    private val replacementRegex = LinkedHashMap<String, String>()
     private val delimiterCSV = ','
     private val translationPath = "translate.csv"
     private val replacementPath = "replace.csv"
+    private val replacementRegexPath = "replace_regex.csv"
     private val pathRegex = "([^/]+)?(/[^/]+)*".toRegex()
 
     fun loadReplacement(path: String = replacementPath) {
@@ -17,6 +19,10 @@ class FileChanger {
 
     fun loadTranslation(path: String = translationPath) {
         load(translation, path)
+    }
+
+    fun loadRegex(path: String = replacementRegexPath) {
+        load(replacementRegex, path)
     }
 
     private fun load(provider: LinkedHashMap<String, String>, path: String) {
@@ -35,13 +41,13 @@ class FileChanger {
         return rename(file, translation)
     }
 
-    fun rename(file: File): File {
-        return rename(file, replacement)
+    fun rename(file: File, regex: Boolean = false): File {
+        return rename(file, if (regex) replacementRegex else replacement, regex)
     }
 
-    private fun rename(file: File, provider: HashMap<String, String>): File {
+    private fun rename(file: File, provider: HashMap<String, String>, regex: Boolean = false): File {
         var name = file.nameWithoutExtension
-        provider.forEach{from, to -> name = name.replace(from, to)}
+        provider.forEach{from, to -> name = if (regex) name.replace(from.toRegex(), to) else name.replace(from, to)}
         val newName = if (file.extension.isEmpty()) name else "$name.${file.extension}"
         val new = File(newName)
         file.renameTo(new)
@@ -86,6 +92,10 @@ class FileChanger {
 
     fun addReplacement(from: String, to: String) {
         add(from, to, replacement)
+    }
+
+    fun addRegex(from: String, to: String) {
+        add(from, to, replacementRegex)
     }
 
     private fun add(from: String, to: String, provider: LinkedHashMap<String, String>) {
