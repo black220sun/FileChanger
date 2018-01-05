@@ -54,11 +54,22 @@ class FileChanger {
         file.renameTo(new)
         return new
     }
+
     fun move(file: File, path: String): File {
         if (!path.matches(pathRegex))
             return file
         File(path).mkdirs()
         val new = File("$path/${file.name}")
+        file.renameTo(new)
+        return new
+    }
+
+    fun move(file: File, dir: File): File {
+        if (!dir.isDirectory)
+            return file
+        if (!dir.exists())
+            dir.mkdirs()
+        val new = File("${dir.absolutePath}/${file.name}")
         file.renameTo(new)
         return new
     }
