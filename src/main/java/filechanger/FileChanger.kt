@@ -9,6 +9,7 @@ class FileChanger {
     private val delimiterCSV = ','
     private val translationPath = "translate.csv"
     private val replacementPath = "replace.csv"
+    private val pathRegex = "([^/]+)?(/[^/]+)*".toRegex()
 
     fun loadReplacement(path: String = replacementPath) {
         load(replacement, path)
@@ -47,21 +48,26 @@ class FileChanger {
         return new
     }
     fun move(file: File, path: String): File {
-        if (!path.matches("([^/]+)?(/[^/]+)*".toRegex()))
+        if (!path.matches(pathRegex))
             return file
         File(path).mkdirs()
         val new = File("$path/${file.name}")
         file.renameTo(new)
         return new
     }
+
     fun moveByName(file: File, path: String = "", from: String = "", to: String = " - "): File {
-        if (!path.matches("([^/]+)?(/[^/]+)*".toRegex()))
+        if (!path.matches(pathRegex))
             return file
         if (from == "" && to == "")
             return file
         val name = file.nameWithoutExtension
-        val start = name.indexOf(from) + from.length
+        var start = name.indexOf(from)
+        if (start != -1)
+            start += from.length
         val end = name.indexOf(to)
+        if (start == -1 && end == -1)
+            return file
         val dir = when {
                     to == "" -> name.subSequence(start, name.length)
                     from == "" -> name.subSequence(0, end)
@@ -82,7 +88,7 @@ class FileChanger {
         add(from, to, replacement)
     }
 
-    private fun add(from: String, to: String, provider: HashMap<String, String>) {
+    private fun add(from: String, to: String, provider: LinkedHashMap<String, String>) {
         provider.put(from, to)
     }
 

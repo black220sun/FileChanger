@@ -119,4 +119,16 @@ class FileChangerTest {
         new.delete()
         File("AlisA").delete()
     }
+    @Test
+    fun moveByNameTest() {
+        val file = File("2._AlisA_-_Rodina.mp3")
+        file.createNewFile()
+        val changer = FileChanger()
+
+        val new = changer.moveByName(file, from = "abc", to = "abc")
+
+        assertEquals(file, new)
+
+        new.delete()
+    }
 }
