@@ -147,4 +147,24 @@ class FileChangerTest {
 
         new.delete()
     }
+    @Test
+    fun directoryRenameTest() {
+        val file = File("AlisA/AlisA_-_Rodina_(zf.fm).mp3")
+        val dir = File("AlisA")
+        dir.mkdir()
+        file.createNewFile()
+        val changer = FileChanger()
+        changer.addRegex("_", " ")
+        changer.addRegex(" \\(.*\\)", "")
+
+        val new = changer.rename(file, true)
+
+        assertTrue(new.exists())
+        assertEquals("AlisA - Rodina.mp3", new.name)
+        assertEquals("AlisA", new.parentFile.name)
+        assertFalse(file.exists())
+
+        new.delete()
+        dir.delete()
+    }
 }

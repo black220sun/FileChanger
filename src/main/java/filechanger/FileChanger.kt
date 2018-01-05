@@ -46,10 +46,11 @@ class FileChanger {
     }
 
     private fun rename(file: File, provider: HashMap<String, String>, regex: Boolean = false): File {
+        val dir = file.absoluteFile.parentFile.absolutePath
         var name = file.nameWithoutExtension
         provider.forEach{from, to -> name = if (regex) name.replace(from.toRegex(), to) else name.replace(from, to)}
         val newName = if (file.extension.isEmpty()) name else "$name.${file.extension}"
-        val new = File(newName)
+        val new = File("$dir/$newName")
         file.renameTo(new)
         return new
     }
