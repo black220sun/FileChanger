@@ -17,7 +17,7 @@ class FileChanger {
         load(translation, path)
     }
 
-    private fun load(provider: HashMap<String, String>, path: String) {
+    private fun load(provider: LinkedHashMap<String, String>, path: String) {
         val file = File(path)
         if (!file.exists())
             return
@@ -53,10 +53,19 @@ class FileChanger {
         file.renameTo(new)
         return new
     }
-    fun moveByName(file: File, path: String = "", delimiter: String = "_-_"): File {
+    fun moveByName(file: File, path: String = "", from: String = "", to: String = " - "): File {
         if (!path.matches("([^/]+)?(/[^/]+)*".toRegex()))
             return file
-        val dir = file.name.split(delimiter)[0]
+        if (from == "" && to == "")
+            return file
+        val name = file.nameWithoutExtension
+        val start = name.indexOf(from) + from.length
+        val end = name.indexOf(to)
+        val dir = when {
+                    to == "" -> name.subSequence(start, name.length)
+                    from == "" -> name.subSequence(0, end)
+                    else -> name.subSequence(start, end)
+                } as String
         val destination = if (path.isEmpty()) dir else "$path/$dir"
         File(destination).mkdirs()
         val new = File("$destination/${file.name}")

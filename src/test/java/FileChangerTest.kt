@@ -2,6 +2,8 @@ import filechanger.FileChanger
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class FileChangerTest {
     @Test
@@ -13,9 +15,9 @@ class FileChangerTest {
 
         val new = changer.translate(file)
 
-        assertEquals(true, new.exists())
+        assertTrue(new.exists())
         assertEquals("тестоВаЯ програММа", new.name)
-        assertEquals(false, file.exists())
+        assertFalse(file.exists())
 
         new.delete()
     }
@@ -28,9 +30,9 @@ class FileChangerTest {
 
         val new = changer.translate(file)
 
-        assertEquals(true, new.exists())
+        assertTrue(new.exists())
         assertEquals("Юпитер - Девушка по городу шагает босиком.mp3", new.name)
-        assertEquals(false, file.exists())
+        assertFalse(file.exists())
 
         new.delete()
     }
@@ -44,9 +46,9 @@ class FileChangerTest {
 
         val new = changer.rename(file)
 
-        assertEquals(true, new.exists())
+        assertTrue(new.exists())
         assertEquals("AlisA - Rodina.mp3", new.name)
-        assertEquals(false, file.exists())
+        assertFalse(file.exists())
 
         new.delete()
     }
@@ -60,8 +62,8 @@ class FileChangerTest {
 
         val new = changer.move(file, "AlisA")
 
-        assertEquals(true, new.exists())
-        assertEquals(false, file.exists())
+        assertTrue(new.exists())
+        assertFalse(file.exists())
         assertEquals("AlisA", new.parentFile.name)
         assertEquals(dir.absolutePath, new.parentFile.absolutePath)
 
@@ -78,8 +80,8 @@ class FileChangerTest {
 
         val new = changer.move(file, "${System.getProperty("user.home")}/IdeaProjects/FileChanger/AlisA")
 
-        assertEquals(true, new.exists())
-        assertEquals(false, file.exists())
+        assertTrue(new.exists())
+        assertFalse(file.exists())
         assertEquals("AlisA", new.parentFile.name)
         assertEquals(dir.absolutePath, new.parentFile.absolutePath)
 
@@ -87,16 +89,31 @@ class FileChangerTest {
         dir.delete()
     }
     @Test
-    fun moveByNameTest() {
+    fun moveByNameToTest() {
         val file = File("AlisA_-_Rodina.mp3")
         file.createNewFile()
         val changer = FileChanger()
 
-        val new = changer.moveByName(file, delimiter = "_-_")
+        val new = changer.moveByName(file, to = "_-_")
 
-        assertEquals(true, new.exists())
-        assertEquals(false, file.exists())
-        assertEquals(true, File("AlisA").isDirectory)
+        assertTrue(new.exists())
+        assertFalse(file.exists())
+        assertTrue(File("AlisA").isDirectory)
+        assertEquals("AlisA", new.parentFile.name)
+
+        new.delete()
+        File("AlisA").delete()
+    }
+    @Test
+    fun moveByNameFromToTest() {
+        val file = File("2._AlisA_-_Rodina.mp3")
+        file.createNewFile()
+        val changer = FileChanger()
+
+        val new = changer.moveByName(file, from = "._", to = "_-_")
+
+        assertTrue(new.exists())
+        assertTrue(File("AlisA").isDirectory)
         assertEquals("AlisA", new.parentFile.name)
 
         new.delete()
