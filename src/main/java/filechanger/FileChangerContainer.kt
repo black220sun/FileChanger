@@ -5,11 +5,13 @@ import java.io.FileReader
 import java.io.FileWriter
 
 class FileChangerContainer {
-    enum class LoadOptions {
+    enum class Type {
         REPLACEMENT, TRANSLATION, REGEX
     }
     private val changer = FileChanger()
     private var files = ArrayList<File>()
+
+    fun getFiles(): List<File> = files
 
     fun init() {
         changer.loadReplacement()
@@ -17,11 +19,19 @@ class FileChangerContainer {
         changer.loadRegex()
     }
 
-    fun load(path: String, table: LoadOptions = LoadOptions.REPLACEMENT) {
+    fun load(path: String, table: Type = Type.REPLACEMENT) {
         when (table) {
-            LoadOptions.REPLACEMENT -> changer.loadReplacement(path)
-            LoadOptions.TRANSLATION -> changer.loadTranslation(path)
-            LoadOptions.REGEX -> changer.loadRegex(path)
+            Type.REPLACEMENT -> changer.loadReplacement(path)
+            Type.TRANSLATION -> changer.loadTranslation(path)
+            Type.REGEX -> changer.loadRegex(path)
+        }
+    }
+
+    fun add(from: String, to: String, table: Type = Type.REPLACEMENT) {
+        when (table) {
+            Type.REPLACEMENT -> changer.addReplacement(from, to)
+            Type.TRANSLATION -> changer.addTranslation(from, to)
+            Type.REGEX -> changer.addRegex(from, to)
         }
     }
 
@@ -31,20 +41,23 @@ class FileChangerContainer {
     }
 
     fun rename(filter: (File)->Boolean = {true}, regex: Boolean = false): List<File> =
-        exec(filter, { changer.rename(it, regex) })
+            exec(filter, { changer.rename(it, regex) })
 
     fun translate(filter: (File)->Boolean = {true}): List<File> =
-        exec(filter, { changer.translate(it) })
+            exec(filter, { changer.translate(it) })
 
     fun move(path: String, filter: (File) -> Boolean = {true}): List<File> =
-        exec(filter, { changer.move(it, path) })
+            exec(filter, { changer.move(it, path) })
+
+    fun move(dir: File, filter: (File) -> Boolean = {true}): List<File> =
+            exec(filter, { changer.move(it, dir) })
 
     fun moveByName(path: String = "", filter: (File) -> Boolean = {true}, from: String = "", to: String = " - "): List<File> =
-        exec(filter, { changer.moveByName(it, path, from, to) })
+            exec(filter, { changer.moveByName(it, path, from, to) })
 
     fun saveFiles(path: String) {
         val file = File(path)
-        val dir = file.parentFile
+        val dir = file.absoluteFile.parentFile
         if (!dir.exists())
             dir.mkdirs()
         val writer = FileWriter(file)
