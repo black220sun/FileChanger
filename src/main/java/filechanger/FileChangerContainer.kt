@@ -9,7 +9,7 @@ class FileChangerContainer {
         REPLACEMENT, TRANSLATION, REGEX
     }
     private val changer = FileChanger()
-    private val files = ArrayList<File>()
+    private var files = ArrayList<File>()
 
     fun init() {
         changer.loadReplacement()
@@ -26,10 +26,7 @@ class FileChangerContainer {
     }
 
     private fun exec(filter: (File)->Boolean = {true}, action: (File)->File): List<File> {
-        val new = ArrayList<File>()
-        files.filter(filter).forEach { new.add(action(it)) }
-        files.removeIf(filter)
-        new.forEach { files.add(it) }
+        files = files.map { if (filter(it)) action(it) else it } as ArrayList<File>
         return files
     }
 
