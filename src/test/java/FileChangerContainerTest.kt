@@ -88,7 +88,7 @@ class FileChangerContainerTest {
         changer.addFiles(files)
         val expected = listOf(File("photo/photo_123.png"),
                 File("photo/photo_124.png"),
-                File("music/music_111.mp3"))
+                File("music/music_111.mp3")).map { it.absoluteFile }
 
         val new = changer.moveByName(to = "_")
 

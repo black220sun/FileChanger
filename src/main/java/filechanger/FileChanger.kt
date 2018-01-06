@@ -75,7 +75,8 @@ class FileChanger {
     fun move(file: File, path: String, force: Boolean = true): File {
         if (!path.matches(pathRegex))
             return file
-        File(path).mkdirs()
+        if (!File(path).exists() && force)
+            File(path).mkdirs()
         val new = File("$path/${file.name}")
         if (force)
             file.renameTo(new)
@@ -85,7 +86,7 @@ class FileChanger {
     fun move(file: File, dir: File, force: Boolean = true): File {
         if (!dir.isDirectory)
             return file
-        if (!dir.exists())
+        if (!dir.exists() && force)
             dir.mkdirs()
         val new = File("${dir.absolutePath}/${file.name}")
         if (force)
@@ -110,8 +111,9 @@ class FileChanger {
                     from == "" -> name.subSequence(0, end)
                     else -> name.subSequence(start, end)
                 } as String
-        val destination = if (path.isEmpty()) dir else "$path/$dir"
-        File(destination).mkdirs()
+        val destination = if (path.isEmpty()) "${file.absoluteFile.parentFile.absolutePath}/$dir" else "$path/$dir"
+        if (!File(destination).exists() && force)
+            File(destination).mkdirs()
         val new = File("$destination/${file.name}")
         if (force)
             file.renameTo(new)

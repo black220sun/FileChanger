@@ -6,7 +6,6 @@ import gui.TableModel
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
-import java.io.File
 
 class EditMenu : JMenu("Edit") {
     private val changer = TableModel.changer
@@ -113,8 +112,8 @@ class EditMenu : JMenu("Edit") {
         val from = JOptionPane.showInputDialog(parent.parent, "From:", "Replace", JOptionPane.QUESTION_MESSAGE)
         if (from == null || from.isEmpty())
             return
-        val to: String? = JOptionPane.showInputDialog(parent.parent, "To:", "Replace", JOptionPane.QUESTION_MESSAGE) ?: return
-        changer.add(from, to!!, table)
+        val to: String = JOptionPane.showInputDialog(parent.parent, "To:", "Replace", JOptionPane.QUESTION_MESSAGE) ?: return
+        changer.add(from, to, table)
     }
 
     private fun load(table: FileChangerContainer.Type) {
