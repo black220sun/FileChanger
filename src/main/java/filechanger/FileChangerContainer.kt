@@ -35,6 +35,14 @@ class FileChangerContainer {
         }
     }
 
+    fun clear(table: Type = Type.REPLACEMENT) {
+        when (table) {
+            Type.REPLACEMENT -> changer.clearReplacement()
+            Type.TRANSLATION -> changer.clearTranslation()
+            Type.REGEX -> changer.clearRegex()
+        }
+    }
+
     private fun exec(force: Boolean, filter: (File)->Boolean, action: (File)->File): List<File> {
         val new = files.map { if (filter(it)) action(it) else it } as ArrayList<File>
         if (force)
@@ -99,8 +107,10 @@ class FileChangerContainer {
         return files
     }
 
-    fun removeFiles(condition: (File)->Boolean): List<File> {
+    fun removeFiles(condition: (File)->Boolean = {true}): List<File> {
         files.removeIf(condition)
         return files
     }
+
+    fun getReplacements(): ArrayList<ArrayList<String>> = changer.getReplacements()
 }

@@ -25,6 +25,22 @@ class FileChanger {
         load(replacementRegex, path)
     }
 
+    fun clearReplacement() {
+        clear(replacement)
+    }
+
+    fun clearTranslation() {
+        clear(translation)
+    }
+
+    fun clearRegex() {
+        clear(replacementRegex)
+    }
+
+    private fun clear(provider: LinkedHashMap<String, String>) {
+        provider.clear()
+    }
+
     private fun load(provider: LinkedHashMap<String, String>, path: String) {
         val file = File(path)
         if (!file.exists())
@@ -116,6 +132,14 @@ class FileChanger {
 
     private fun add(from: String, to: String, provider: LinkedHashMap<String, String>) {
         provider.put(from, to)
+    }
+
+    fun getReplacements(): ArrayList<ArrayList<String>> {
+        val out = ArrayList<ArrayList<String>>()
+        translation.forEach { from, to ->  out.add(arrayListOf(from, to, "translation")) }
+        replacement.forEach { from, to ->  out.add(arrayListOf(from, to, "replacement")) }
+        replacementRegex.forEach { from, to ->  out.add(arrayListOf(from, to, "regex")) }
+        return out
     }
 
 }
