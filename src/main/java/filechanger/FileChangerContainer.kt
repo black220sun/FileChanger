@@ -35,25 +35,28 @@ class FileChangerContainer {
         }
     }
 
-    private fun exec(filter: (File)->Boolean = {true}, action: (File)->File): List<File> {
-        files = files.map { if (filter(it)) action(it) else it } as ArrayList<File>
-        return files
+    private fun exec(force: Boolean, filter: (File)->Boolean, action: (File)->File): List<File> {
+        val new = files.map { if (filter(it)) action(it) else it } as ArrayList<File>
+        if (force)
+            files = new
+        return new
     }
 
-    fun rename(filter: (File)->Boolean = {true}, regex: Boolean = false): List<File> =
-            exec(filter, { changer.rename(it, regex) })
+    fun rename(filter: (File)->Boolean = {true}, regex: Boolean = false, force: Boolean = true): List<File> =
+            exec(force, filter, { changer.rename(it, regex, force) })
 
-    fun translate(filter: (File)->Boolean = {true}): List<File> =
-            exec(filter, { changer.translate(it) })
+    fun translate(filter: (File)->Boolean = {true}, force: Boolean = true): List<File> =
+            exec(force, filter, { changer.translate(it, force) })
 
-    fun move(path: String, filter: (File) -> Boolean = {true}): List<File> =
-            exec(filter, { changer.move(it, path) })
+    fun move(path: String, filter: (File) -> Boolean = {true}, force: Boolean = true): List<File> =
+            exec(force, filter, { changer.move(it, path, force) })
 
-    fun move(dir: File, filter: (File) -> Boolean = {true}): List<File> =
-            exec(filter, { changer.move(it, dir) })
+    fun move(dir: File, filter: (File) -> Boolean = {true}, force: Boolean = true): List<File> =
+            exec(force, filter, { changer.move(it, dir, force) })
 
-    fun moveByName(path: String = "", filter: (File) -> Boolean = {true}, from: String = "", to: String = " - "): List<File> =
-            exec(filter, { changer.moveByName(it, path, from, to) })
+    fun moveByName(path: String = "", filter: (File) -> Boolean = {true},
+                   from: String = "", to: String = " - ", force: Boolean = true): List<File> =
+            exec(force, filter, { changer.moveByName(it, path, from, to, force) })
 
     fun saveFiles(path: String) {
         val file = File(path)

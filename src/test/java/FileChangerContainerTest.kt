@@ -43,7 +43,7 @@ class FileChangerContainerTest {
         changer.addFile("pesnja.2")
         val expected = listOf(file1, File("тест.2"), File("программа.2"), File("песня.2")).map { it.absoluteFile }
 
-        val new = changer.translate { it.extension == "2" }
+        val new = changer.translate( { it.extension == "2" } )
 
         new.forEach { assertTrue { it.exists() } }
         assertFalse { File("тест.1").exists() }
