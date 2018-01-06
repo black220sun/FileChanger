@@ -6,6 +6,7 @@ import gui.TableModel
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
+import java.io.File
 
 class EditMenu : JMenu("Edit") {
     private val changer = TableModel.changer
@@ -117,7 +118,7 @@ class EditMenu : JMenu("Edit") {
     }
 
     private fun load(table: FileChangerContainer.Type) {
-        val chooser = JFileChooser()
+        val chooser = JFileChooser(File("."))
         if (chooser.showOpenDialog(parent.parent) == JFileChooser.APPROVE_OPTION)
             changer.load(chooser.selectedFile.absolutePath, table)
     }
