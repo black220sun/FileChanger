@@ -37,44 +37,47 @@ class FileChanger {
         reader.close()
     }
 
-    fun translate(file: File): File {
-        return rename(file, translation)
+    fun translate(file: File, force: Boolean = true): File {
+        return rename(file, translation, false, force)
     }
 
-    fun rename(file: File, regex: Boolean = false): File {
-        return rename(file, if (regex) replacementRegex else replacement, regex)
+    fun rename(file: File, regex: Boolean = false, force: Boolean = true): File {
+        return rename(file, if (regex) replacementRegex else replacement, regex, force)
     }
 
-    private fun rename(file: File, provider: HashMap<String, String>, regex: Boolean = false): File {
+    private fun rename(file: File, provider: HashMap<String, String>, regex: Boolean, force: Boolean): File {
         val dir = file.absoluteFile.parentFile.absolutePath
         var name = file.nameWithoutExtension
         provider.forEach{from, to -> name = if (regex) name.replace(from.toRegex(), to) else name.replace(from, to)}
         val newName = if (file.extension.isEmpty()) name else "$name.${file.extension}"
         val new = File("$dir/$newName")
-        file.renameTo(new)
+        if (force)
+            file.renameTo(new)
         return new
     }
 
-    fun move(file: File, path: String): File {
+    fun move(file: File, path: String, force: Boolean = true): File {
         if (!path.matches(pathRegex))
             return file
         File(path).mkdirs()
         val new = File("$path/${file.name}")
-        file.renameTo(new)
+        if (force)
+            file.renameTo(new)
         return new
     }
 
-    fun move(file: File, dir: File): File {
+    fun move(file: File, dir: File, force: Boolean = true): File {
         if (!dir.isDirectory)
             return file
         if (!dir.exists())
             dir.mkdirs()
         val new = File("${dir.absolutePath}/${file.name}")
-        file.renameTo(new)
+        if (force)
+            file.renameTo(new)
         return new
     }
 
-    fun moveByName(file: File, path: String = "", from: String = "", to: String = " - "): File {
+    fun moveByName(file: File, path: String = "", from: String = "", to: String = " - ", force: Boolean = true): File {
         if (!path.matches(pathRegex))
             return file
         if (from == "" && to == "")
@@ -94,7 +97,8 @@ class FileChanger {
         val destination = if (path.isEmpty()) dir else "$path/$dir"
         File(destination).mkdirs()
         val new = File("$destination/${file.name}")
-        file.renameTo(new)
+        if (force)
+            file.renameTo(new)
         return new
     }
 
