@@ -43,6 +43,19 @@ class FileChangerContainer {
         }
     }
 
+    fun capitalize(filter: (File) -> Boolean = {true}, delimiter: String = " - ", allBefore: Boolean = true,
+                   beforeDelim: String = " ", force: Boolean = true): List<File> {
+        val new = files.map {
+            if (filter(it))
+                changer.capitalize(it, delimiter, allBefore, beforeDelim, force)
+            else
+                it
+        } as ArrayList<File>
+        if (force)
+            files = new
+        return new
+    }
+
     private fun exec(force: Boolean, filter: (File)->Boolean, action: (File)->File): List<File> {
         val new = files.map { if (filter(it)) action(it) else it } as ArrayList<File>
         if (force)

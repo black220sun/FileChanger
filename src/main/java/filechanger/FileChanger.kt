@@ -72,6 +72,24 @@ class FileChanger {
         return new
     }
 
+    fun capitalize(file: File, delimiter: String, allBefore: Boolean, beforeDelim: String = " ", force: Boolean): File {
+        val dir = file.absoluteFile.parentFile.absolutePath
+        val name = file.nameWithoutExtension
+        val parts = name.split(delimiter)
+        val before = parts[0]
+        val after = parts.subList(1, parts.size).joinToString(separator = delimiter).capitalize()
+        val newBefore =
+                if (allBefore)
+                    before.split(beforeDelim).joinToString(separator = beforeDelim) { it.capitalize() }
+                else
+                    before.capitalize()
+        val newName = "$newBefore$delimiter$after" + if (file.extension.isEmpty()) "" else ".${file.extension}"
+        val new = File("$dir/$newName")
+        if (force)
+            file.renameTo(new)
+        return new
+    }
+
     fun move(file: File, path: String, force: Boolean = true): File {
         if (!path.matches(pathRegex))
             return file

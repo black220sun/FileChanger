@@ -7,5 +7,6 @@ class MenuBar : JMenuBar() {
         add(FilesMenu())
         add(EditMenu())
         add(MoveMenu())
+        add(RenameMenu())
     }
 }
