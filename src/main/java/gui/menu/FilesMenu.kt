@@ -63,6 +63,10 @@ class FilesMenu: JMenu("Files") {
         close.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK)
         close.addActionListener { MainController.closeTab() }
         add(close)
+
+        val quit = JMenuItem("Quit")
+        quit.addActionListener { MainController.close() }
+        add(quit)
     }
 
     private fun files(save: Boolean) {

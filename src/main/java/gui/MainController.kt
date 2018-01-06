@@ -12,6 +12,10 @@ object MainController {
         view.isVisible = true
     }
 
+    fun close() {
+        view.close()
+    }
+
     private fun addTab(title: String, component: JComponent) {
         view.tabPanel.addTab(title,component)
         view.tabPanel.selectedIndex = view.tabPanel.indexOfComponent(component)
