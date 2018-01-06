@@ -3,6 +3,7 @@ package gui
 import gui.tabs.ReplacementsTab
 import gui.tabs.ResultsTab
 import java.io.File
+import javax.swing.JComponent
 
 object MainController {
     private val view = MainView()
@@ -10,8 +11,16 @@ object MainController {
     fun show() {
         view.isVisible = true
     }
-    fun results(files: Collection<Collection<File>>) {
-        view.tabPanel.addTab("Results", ResultsTab(files))
+
+    private fun addTab(title: String, component: JComponent) {
+        view.tabPanel.addTab(title,component)
+        view.tabPanel.selectedIndex = view.tabPanel.indexOfComponent(component)
+    }
+
+    fun results(files: Collection<Collection<File>>, force: Boolean) {
+        addTab("Results", ResultsTab(files))
+        if (force)
+            TableModel.update()
     }
 
     fun closeTab() {
@@ -21,6 +30,6 @@ object MainController {
     }
 
     fun replacements(replacements: ArrayList<ArrayList<String>>) {
-        view.tabPanel.addTab("Replacements", ReplacementsTab(replacements))
+        addTab("Replacements", ReplacementsTab(replacements))
     }
 }

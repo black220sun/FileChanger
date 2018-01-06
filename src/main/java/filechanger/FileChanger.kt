@@ -46,7 +46,7 @@ class FileChanger {
         if (!file.exists())
             return
         val reader = FileReader(file)
-        reader.readLines().filter { it.matches("[^$delimiterCSV]+$delimiterCSV[^$delimiterCSV]+".toRegex()) }.forEach {
+        reader.readLines().filter { it.matches("[^$delimiterCSV]+$delimiterCSV[^$delimiterCSV]*".toRegex()) }.forEach {
             val entry = it.split(delimiterCSV)
             add(entry[0], entry[1], provider)
         }

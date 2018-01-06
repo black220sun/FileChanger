@@ -1,5 +1,6 @@
 package gui
 
+import filechanger.FileChangerContainer
 import java.io.File
 import java.util.*
 import javax.swing.table.AbstractTableModel
@@ -7,7 +8,7 @@ import javax.swing.table.AbstractTableModel
 object TableModel: AbstractTableModel() {
     private val columns = arrayOf("Name", "Type", "Path", "Modified", "Size")
     private val data = ArrayList<ArrayList<Any>>()
-    val files = ArrayList<File>()
+    val changer = FileChangerContainer()
 
     override fun getColumnName(col: Int): String = columns[col]
 
@@ -20,10 +21,10 @@ object TableModel: AbstractTableModel() {
     override fun getColumnClass(col: Int): Class<*> = getValueAt(0, col).javaClass
 
     fun add(file: File) {
-        if (files.contains(file))
+        if (changer.getFiles().contains(file))
             return
+        changer.addFile(file)
         data.add(fileToList(file))
-        files.add(file)
         fireTableDataChanged()
     }
 
@@ -62,8 +63,14 @@ object TableModel: AbstractTableModel() {
     }
 
     fun clear() {
-        files.clear()
+        changer.removeFiles()
         data.clear()
+        fireTableDataChanged()
+    }
+
+    fun update() {
+        data.clear()
+        changer.getFiles().forEach { data.add(fileToList(it)) }
         fireTableDataChanged()
     }
 }

@@ -67,6 +67,8 @@ class FileChangerContainer {
             exec(force, filter, { changer.moveByName(it, path, from, to, force) })
 
     fun saveFiles(path: String) {
+        if (files.isEmpty())
+            return
         val file = File(path)
         val dir = file.absoluteFile.parentFile
         if (!dir.exists())
