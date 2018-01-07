@@ -1,17 +1,19 @@
 package filechanger
 
+import settings.Settings
 import java.io.File
 import java.io.FileReader
 
 class FileChanger {
+    private val sep = Settings.separator
+    private val delimiterCSV = Settings.csv
     private val translation = LinkedHashMap<String, String>()
     private val replacement = LinkedHashMap<String, String>()
     private val replacementRegex = LinkedHashMap<String, String>()
-    private val delimiterCSV = ','
     private val translationPath = "translate.csv"
     private val replacementPath = "replace.csv"
     private val replacementRegexPath = "replace_regex.csv"
-    private val pathRegex = "([^/]+)?(/[^/]+)*".toRegex()
+    private val pathRegex = "([^$sep]+)?($sep[^$sep]+)*".toRegex()
 
     fun loadReplacement(path: String = replacementPath) {
         load(replacement, path)
@@ -66,7 +68,7 @@ class FileChanger {
         var name = file.nameWithoutExtension
         provider.forEach{from, to -> name = if (regex) name.replace(from.toRegex(), to) else name.replace(from, to)}
         val newName = if (file.extension.isEmpty()) name else "$name.${file.extension}"
-        val new = File("$dir/$newName")
+        val new = File("$dir$sep$newName")
         if (force)
             file.renameTo(new)
         return new
@@ -84,7 +86,7 @@ class FileChanger {
                 else
                     before.capitalize()
         val newName = "$newBefore$delimiter$after" + if (file.extension.isEmpty()) "" else ".${file.extension}"
-        val new = File("$dir/$newName")
+        val new = File("$dir$sep$newName")
         if (force)
             file.renameTo(new)
         return new
@@ -95,7 +97,7 @@ class FileChanger {
             return file
         if (!File(path).exists() && force)
             File(path).mkdirs()
-        val new = File("$path/${file.name}")
+        val new = File("$path$sep${file.name}")
         if (force)
             file.renameTo(new)
         return new
@@ -106,7 +108,7 @@ class FileChanger {
             return file
         if (!dir.exists() && force)
             dir.mkdirs()
-        val new = File("${dir.absolutePath}/${file.name}")
+        val new = File("${dir.absolutePath}$sep${file.name}")
         if (force)
             file.renameTo(new)
         return new
@@ -132,7 +134,7 @@ class FileChanger {
         val destination = if (path.isEmpty()) "${file.absoluteFile.parentFile.absolutePath}/$dir" else "$path/$dir"
         if (!File(destination).exists() && force)
             File(destination).mkdirs()
-        val new = File("$destination/${file.name}")
+        val new = File("$destination$sep${file.name}")
         if (force)
             file.renameTo(new)
         return new

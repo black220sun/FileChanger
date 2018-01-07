@@ -2,19 +2,20 @@ package gui.menu
 
 import gui.MainController
 import gui.TableModel
+import settings.Settings
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.*
 
-class FilesMenu: JMenu("Files") {
+class FilesMenu: JMenu(Settings.getLang("Files")) {
     init {
         setMnemonic('F')
 
-        val hidden = JCheckBoxMenuItem("Show hidden files", false)
+        val hidden = JCheckBoxMenuItem(Settings.getLang("Show hidden files"), false)
         hidden.setMnemonic('h')
 
-        val open = JMenuItem("Open")
+        val open = JMenuItem(Settings.getLang("Open"))
         open.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK)
         open.setMnemonic('O')
         open.addActionListener {
@@ -24,7 +25,7 @@ class FilesMenu: JMenu("Files") {
         }
         add(open)
 
-        val dir = JMenuItem("Add from directory")
+        val dir = JMenuItem(Settings.getLang("Add from directory"))
         dir.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK)
         dir.setMnemonic('A')
         dir.addActionListener {
@@ -36,7 +37,7 @@ class FilesMenu: JMenu("Files") {
 
         add(hidden)
 
-        val clear = JMenuItem("Clear")
+        val clear = JMenuItem(Settings.getLang("Clear"))
         clear.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK)
         clear.setMnemonic('C')
         clear.addActionListener { TableModel.clear() }
@@ -44,13 +45,13 @@ class FilesMenu: JMenu("Files") {
 
         add(JSeparator())
 
-        val save = JMenuItem("Save files")
+        val save = JMenuItem(Settings.getLang("Save files"))
         save.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)
         save.setMnemonic('S')
         save.addActionListener { files(true) }
         add(save)
 
-        val load = JMenuItem("Load files")
+        val load = JMenuItem(Settings.getLang("Load files"))
         load.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK)
         load.setMnemonic('L')
         load.addActionListener { files(false) }
@@ -58,13 +59,13 @@ class FilesMenu: JMenu("Files") {
 
         add(JSeparator())
 
-        val close = JMenuItem("Close tab")
+        val close = JMenuItem(Settings.getLang("Close tab"))
         close.setMnemonic('t')
         close.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK)
         close.addActionListener { MainController.closeTab() }
         add(close)
 
-        val quit = JMenuItem("Quit")
+        val quit = JMenuItem(Settings.getLang("Quit"))
         quit.addActionListener { MainController.close() }
         add(quit)
     }
@@ -76,7 +77,7 @@ class FilesMenu: JMenu("Files") {
         val path = fileChooser.selectedFile.absolutePath
         if (save) {
             TableModel.changer.saveFiles(path)
-            JOptionPane.showMessageDialog(parent.parent, "Done!")
+            JOptionPane.showMessageDialog(parent.parent, Settings.getLang("Done!"))
         } else {
             TableModel.changer.loadFiles(path)
             TableModel.update()

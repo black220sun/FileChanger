@@ -2,6 +2,7 @@ package gui
 
 import gui.menu.MenuBar
 import gui.tabs.FilesTab
+import settings.Settings
 import java.awt.Dimension
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
@@ -10,7 +11,7 @@ import javax.swing.JOptionPane
 import javax.swing.JTabbedPane
 import javax.swing.WindowConstants
 
-class MainView : JFrame("File Changer"), WindowListener {
+class MainView : JFrame(Settings.getLang("File Changer")), WindowListener {
     override fun windowDeiconified(p0: WindowEvent?) = Unit
     override fun windowClosed(p0: WindowEvent?) = Unit
     override fun windowActivated(p0: WindowEvent?) = Unit
@@ -23,7 +24,7 @@ class MainView : JFrame("File Changer"), WindowListener {
     init {
         jMenuBar = MenuBar()
         val filesTab = FilesTab()
-        tabPanel.addTab("Files", filesTab)
+        tabPanel.addTab(Settings.getLang("Files"), filesTab)
         add(tabPanel)
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         preferredSize = Dimension(1000, 600)
@@ -32,7 +33,7 @@ class MainView : JFrame("File Changer"), WindowListener {
     }
 
     fun close() {
-        val result = JOptionPane.showConfirmDialog(this, "Quit?", "", JOptionPane.YES_NO_OPTION)
+        val result = JOptionPane.showConfirmDialog(this, Settings.getLang("Quit?"), "", JOptionPane.YES_NO_OPTION)
         if (result == JOptionPane.OK_OPTION || result == JOptionPane.YES_OPTION)
             dispose()
     }

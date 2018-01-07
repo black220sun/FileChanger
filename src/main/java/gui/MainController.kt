@@ -3,6 +3,7 @@ package gui
 import gui.tabs.ReplacementsTab
 import gui.tabs.ResultsTab
 import gui.tabs.CapitalizeTab
+import settings.Settings
 import java.io.File
 import javax.swing.JComponent
 
@@ -23,7 +24,7 @@ object MainController {
     }
 
     fun results(files: Collection<Collection<File>>, force: Boolean) {
-        addTab("Results", ResultsTab(files))
+        addTab(Settings.getLang("Results"), ResultsTab(files))
         if (force)
             TableModel.update()
     }
@@ -35,10 +36,10 @@ object MainController {
     }
 
     fun replacements(replacements: ArrayList<ArrayList<String>>) {
-        addTab("Replacements", ReplacementsTab(replacements))
+        addTab(Settings.getLang("Replacements"), ReplacementsTab(replacements))
     }
 
     fun capitalization() {
-        addTab("Capitalize", CapitalizeTab())
+        addTab(Settings.getLang("Capitalize"), CapitalizeTab())
     }
 }

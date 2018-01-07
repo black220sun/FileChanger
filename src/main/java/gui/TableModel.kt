@@ -1,12 +1,14 @@
 package gui
 
 import filechanger.FileChangerContainer
+import settings.Settings
 import java.io.File
 import java.util.*
 import javax.swing.table.AbstractTableModel
 
 object TableModel: AbstractTableModel() {
-    private val columns = arrayOf("Name", "Type", "Path", "Modified", "Size")
+    private val columns = arrayOf(Settings.getLang("Name"), Settings.getLang("Type"),
+            Settings.getLang("Path"), Settings.getLang("Modified"), Settings.getLang("Size"))
     private val data = ArrayList<ArrayList<Any>>()
     val changer = FileChangerContainer()
 

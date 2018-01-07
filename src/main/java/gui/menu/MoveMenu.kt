@@ -2,17 +2,18 @@ package gui.menu
 
 import gui.MainController
 import gui.TableModel
+import settings.Settings
 import javax.swing.*
 
-class MoveMenu : JMenu("Move") {
+class MoveMenu : JMenu(Settings.getLang("Move")) {
     private val changer = TableModel.changer
     init {
         setMnemonic('M')
 
-        val force = JCheckBoxMenuItem("Force move", false)
+        val force = JCheckBoxMenuItem(Settings.getLang("Force move"), false)
         force.setMnemonic('F')
 
-        val toDir = JMenuItem("To directory")
+        val toDir = JMenuItem(Settings.getLang("To directory"))
         toDir.setMnemonic('d')
         toDir.addActionListener {
             val chooser = JFileChooser()
@@ -25,33 +26,36 @@ class MoveMenu : JMenu("Move") {
         }
         add(toDir)
 
-        val byName = JMenuItem("By name")
+        val byName = JMenuItem(Settings.getLang("By name"))
         byName.setMnemonic('n')
-        byName.addActionListener {
-            val from = JOptionPane.showInputDialog(parent.parent, "After characters:", "Get directory name", JOptionPane.QUESTION_MESSAGE) ?: return@addActionListener
-            val to = JOptionPane.showInputDialog(parent.parent, "Until characters:", "Get directory name", JOptionPane.QUESTION_MESSAGE) ?: return@addActionListener
-            val files = changer.getFiles()
-            val new = changer.moveByName(force = force.state, from = from, to = to)
-            MainController.results(arrayListOf(files, new), force.state)
-        }
+        byName.addActionListener { getLines(force = force.state) }
         add(byName)
 
-        val dirName = JMenuItem("To directory by name")
+        val dirName = JMenuItem(Settings.getLang("To directory by name"))
         dirName.setMnemonic('T')
         dirName.addActionListener {
             val chooser = JFileChooser()
             chooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
             if (chooser.showOpenDialog(parent.parent) != JFileChooser.APPROVE_OPTION)
                 return@addActionListener
-            val from = JOptionPane.showInputDialog(parent.parent, "After characters:", "Get directory name", JOptionPane.QUESTION_MESSAGE) ?: return@addActionListener
-            val to = JOptionPane.showInputDialog(parent.parent, "Until characters:", "Get directory name", JOptionPane.QUESTION_MESSAGE) ?: return@addActionListener
-            val files = changer.getFiles()
-            val new = changer.moveByName(force = force.state, from = from, to = to,
-                    path = chooser.selectedFile.absolutePath)
-            MainController.results(arrayListOf(files, new), force.state)
+            getLines(force = force.state, path = chooser.selectedFile.absolutePath)
         }
         add(dirName)
 
         add(force)
+    }
+
+    private fun getLines(force: Boolean, path: String = "") {
+        val from = JOptionPane.showInputDialog(parent.parent, Settings.getLang("After characters:"),
+                Settings.getLang("Get directory name"), JOptionPane.QUESTION_MESSAGE) ?: return
+        val to = JOptionPane.showInputDialog(parent.parent, Settings.getLang("Until characters:"),
+                Settings.getLang("Get directory name"), JOptionPane.QUESTION_MESSAGE) ?: return
+        val files = changer.getFiles()
+        val new =
+                if (path.isEmpty())
+                    changer.moveByName(force = force, from = from, to = to)
+                else
+                    changer.moveByName(force = force, from = from, to = to, path = path)
+        MainController.results(arrayListOf(files, new), force)
     }
 }
