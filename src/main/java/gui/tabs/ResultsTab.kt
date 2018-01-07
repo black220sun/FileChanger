@@ -14,8 +14,8 @@ class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
     }
 
     private class ResultModel(files: Collection<Collection<File>>) : AbstractTableModel() {
-        val columns = arrayOf(Settings.getLang("Old name"), Settings.getLang("Old path"),
-                Settings.getLang("New name"), Settings.getLang("New path"))
+        val columns = arrayOf("Old name", "Old path", "New name", "New path")
+                .map { Settings.getLang(it) }
         val data = createData(files)
 
         private fun createData(files: Collection<Collection<File>>): Collection<Collection<String>> {

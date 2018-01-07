@@ -1,6 +1,9 @@
 package gui.tabs
 
-import settings.Settings
+import gui.util.LButton
+import gui.util.LCheckBox
+import gui.util.LLabel
+import settings.Settings as st
 import javax.swing.*
 
 class SettingsTab : JPanel() {
@@ -9,17 +12,42 @@ class SettingsTab : JPanel() {
         panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
         add(panel)
 
-        panel.add(JLabel(Settings.getLang("Language:")))
-        val lang = JComboBox(Settings.languages.keys.toTypedArray())
-        lang.selectedItem = Settings.getProperty("langName")!!
-        lang.addActionListener {
-            Settings.setProperty("langName", lang.selectedItem as String)
-        }
+        panel.add(LLabel("Language:"))
+        val lang = JComboBox(st.getLanguages())
+        lang.selectedItem = st.getLangName()
         panel.add(lang)
 
-        val process = JButton(Settings.getLang("Save"))
+        panel.add(LLabel("Force actions"))
+        val forceAll = LCheckBox("All", st.getForce("forceAll"))
+        val forceRename = LCheckBox("Rename", st.getForce("forceRename"))
+        val forceMove = LCheckBox("Move", st.getForce("forceMove"))
+        val forceQuit = LCheckBox("Quit", st.getForce("forceQuit"))
+        val forces = arrayOf(forceRename, forceMove, forceQuit)
+        panel.add(forceAll)
+        forceAll.addActionListener {
+            forces.forEach {
+                if (forceAll.isSelected)
+                    it.isSelected = true
+                it.isEnabled = !forceAll.isSelected
+            }
+        }
+        forces.forEach {
+            it.isEnabled = !forceAll.isSelected
+            panel.add(it)
+        }
+
+        val save = LCheckBox("Save files on quit", st.getSaveLoad())
+        panel.add(save)
+
+        val process = LButton("Save")
         process.addActionListener {
-            Settings.save()
+            st.setLangName(lang.selectedItem as String)
+            st.setForce("forceAll", forceAll.isSelected)
+            st.setForce("forceRename", forceRename.isSelected)
+            st.setForce("forceMove", forceMove.isSelected)
+            st.setForce("forceQuit", forceQuit.isSelected)
+            st.setSaveLoad(save.isSelected)
+            st.save()
         }
         panel.add(process)
     }

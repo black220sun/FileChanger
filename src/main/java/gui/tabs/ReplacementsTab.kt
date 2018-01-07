@@ -13,8 +13,7 @@ class ReplacementsTab(replacements: Collection<Collection<String>>) : JScrollPan
     }
 
     private class ResultModel(replacements: Collection<Collection<String>>) : AbstractTableModel() {
-        val columns = arrayOf(Settings.getLang("From"), Settings.getLang("To"),
-                Settings.getLang("Type"))
+        val columns = arrayOf("From", "To", "Type").map { Settings.getLang(it) }
         val data = replacements
 
         override fun getRowCount(): Int = data.size

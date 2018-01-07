@@ -1,15 +1,14 @@
 package gui.menu
 
 import gui.MainController
-import settings.Settings
-import javax.swing.JMenu
-import javax.swing.JMenuItem
+import gui.util.LMenu
+import gui.util.LMenuItem
 
-class RenameMenu : JMenu(Settings.getLang("Rename")) {
+class RenameMenu : LMenu("Rename") {
     init {
         setMnemonic('R')
 
-        val cap = JMenuItem(Settings.getLang("Capitalize"))
+        val cap = LMenuItem("Capitalize")
         cap.setMnemonic('C')
         cap.addActionListener { MainController.capitalization() }
         add(cap)

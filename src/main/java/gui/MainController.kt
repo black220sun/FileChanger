@@ -45,6 +45,10 @@ object MainController {
     }
 
     fun settings() {
-        addTab(Settings.getLang("Settings"), SettingsTab())
+        val index = view.tabPanel.indexOfTab("Settings")
+        if (index > 0)
+            view.tabPanel.selectedIndex = index
+        else
+            addTab(Settings.getLang("Settings"), SettingsTab())
     }
 }

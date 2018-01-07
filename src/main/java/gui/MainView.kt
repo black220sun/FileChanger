@@ -11,7 +11,7 @@ import javax.swing.JOptionPane
 import javax.swing.JTabbedPane
 import javax.swing.WindowConstants
 
-class MainView : JFrame(Settings.getLang("File Changer")), WindowListener {
+class MainView : JFrame("File Changer"), WindowListener {
     override fun windowDeiconified(p0: WindowEvent?) = Unit
     override fun windowClosed(p0: WindowEvent?) = Unit
     override fun windowActivated(p0: WindowEvent?) = Unit
@@ -30,13 +30,31 @@ class MainView : JFrame(Settings.getLang("File Changer")), WindowListener {
         preferredSize = Dimension(1000, 600)
         pack()
         addWindowListener(this)
+        load()
+    }
+
+    private fun load() {
+        if (Settings.getSaveLoad()) {
+            TableModel.changer.loadFiles(Settings.getSaveLoadPath())
+            TableModel.update()
+        }
     }
 
     fun close() {
-        val result = JOptionPane.showConfirmDialog(this, Settings.getLang("Quit?"), "", JOptionPane.YES_NO_OPTION)
-        if (result == JOptionPane.OK_OPTION || result == JOptionPane.YES_OPTION) {
-            Settings.saveLang()
-            dispose()
+        if (Settings.getForce("forceQuit")) {
+            quit()
+            return
         }
+        val result = JOptionPane.showConfirmDialog(this, Settings.getLang("Quit?"), "", JOptionPane.YES_NO_OPTION)
+        if (result == JOptionPane.YES_OPTION) {
+            quit()
+        }
+    }
+
+    private fun quit() {
+        if (Settings.getSaveLoad())
+            TableModel.changer.saveFiles(Settings.getSaveLoadPath())
+        Settings.saveLang()
+        dispose()
     }
 }

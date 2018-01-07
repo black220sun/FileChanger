@@ -7,8 +7,8 @@ import java.util.*
 import javax.swing.table.AbstractTableModel
 
 object TableModel: AbstractTableModel() {
-    private val columns = arrayOf(Settings.getLang("Name"), Settings.getLang("Type"),
-            Settings.getLang("Path"), Settings.getLang("Modified"), Settings.getLang("Size"))
+    private val columns = arrayOf("Name", "Type", "Path", "Modified", "Size")
+            .map { Settings.getLang(it) }
     private val data = ArrayList<ArrayList<Any>>()
     val changer = FileChangerContainer()
 

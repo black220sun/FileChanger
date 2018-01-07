@@ -1,15 +1,18 @@
 package gui.menu
 
 import gui.MainController
-import settings.Settings
-import javax.swing.JMenu
-import javax.swing.JMenuItem
+import gui.util.LMenu
+import gui.util.LMenuItem
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import javax.swing.KeyStroke
 
-class SettingsMenu : JMenu(Settings.getLang("Settings")) {
+class SettingsMenu : LMenu("Settings") {
     init {
         setMnemonic('S')
 
-        val settings = JMenuItem(Settings.getLang("Settings"))
+        val settings = LMenuItem("Settings")
+        settings.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK)
         settings.setMnemonic('S')
         settings.addActionListener { MainController.settings() }
         add(settings)

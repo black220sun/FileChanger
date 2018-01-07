@@ -3,68 +3,68 @@ package gui.menu
 import filechanger.FileChangerContainer
 import gui.MainController
 import gui.TableModel
+import gui.util.LMenu
+import gui.util.LMenuItem
 import settings.Settings
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
 import java.io.File
 
-class EditMenu : JMenu(Settings.getLang("Edit")) {
+class EditMenu : LMenu("Edit") {
     private val changer = TableModel.changer
     init {
         changer.init()
         setMnemonic('E')
 
-        val force = JCheckBoxMenuItem(Settings.getLang("Force rename"), false)
-        force.setMnemonic('F')
-
-        val translate = JMenuItem(Settings.getLang("Translate"))
+        val translate = LMenuItem("Translate")
         translate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK)
         translate.setMnemonic('T')
         translate.addActionListener {
             val files = changer.getFiles()
-            val new = changer.translate(force = force.state)
-            MainController.results(arrayListOf(files, new), force.state)
+            val force = Settings.getForce("forceRename")
+            val new = changer.translate(force = force)
+            MainController.results(arrayListOf(files, new), force)
         }
         add(translate)
 
-        val rename = JMenuItem(Settings.getLang("Rename"))
+        val rename = LMenuItem("Rename")
         rename.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK)
         rename.setMnemonic('R')
         rename.addActionListener {
             val files = changer.getFiles()
-            val new = changer.translate(force = force.state)
-            MainController.results(arrayListOf(files, new), force.state)
+            val force = Settings.getForce("forceRename")
+            val new = changer.translate(force = force)
+            MainController.results(arrayListOf(files, new), force)
         }
         add(rename)
 
-        val regex = JMenuItem(Settings.getLang("Regex rename"))
+        val regex = LMenuItem("Regex rename")
         regex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK)
         regex.setMnemonic('g')
         regex.addActionListener {
             val files = changer.getFiles()
-            val new = changer.rename(force = force.state, regex = true)
-            MainController.results(arrayListOf(files, new), force.state)
+            val force = Settings.getForce("forceRename")
+            val new = changer.rename(force = force, regex = true)
+            MainController.results(arrayListOf(files, new), force)
         }
         add(regex)
 
-        add(force)
-
         add(JSeparator())
 
-        val addTranslate = JMenuItem(Settings.getLang("Add translation"))
+        val addTranslate = LMenuItem("Add translation")
         addTranslate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK)
         addTranslate.setMnemonic('l')
         addTranslate.addActionListener { getLines(FileChangerContainer.Type.TRANSLATION) }
         add(addTranslate)
 
-        val addReplace = JMenuItem(Settings.getLang("Add rename"))
+        val addReplace = LMenuItem("Add rename")
         addReplace.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK)
         addReplace.setMnemonic('n')
         addReplace.addActionListener { getLines(FileChangerContainer.Type.REPLACEMENT) }
         add(addReplace)
 
-        val addRegex = JMenuItem(Settings.getLang("Add regex"))
+        val addRegex = LMenuItem("Add regex")
         addRegex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK)
         addRegex.setMnemonic('g')
         addRegex.addActionListener { getLines(FileChangerContainer.Type.REGEX) }
@@ -72,21 +72,21 @@ class EditMenu : JMenu(Settings.getLang("Edit")) {
 
         add(JSeparator())
 
-        val clearTranslate = JMenuItem(Settings.getLang("Clear translation"))
+        val clearTranslate = LMenuItem("Clear translation")
         clearTranslate.addActionListener { changer.clear(FileChangerContainer.Type.TRANSLATION) }
         add(clearTranslate)
 
-        val clearReplace = JMenuItem(Settings.getLang("Clear rename"))
+        val clearReplace = LMenuItem("Clear rename")
         clearReplace.addActionListener { changer.clear(FileChangerContainer.Type.REPLACEMENT) }
         add(clearReplace)
 
-        val clearRegex = JMenuItem(Settings.getLang("Clear regex"))
+        val clearRegex = LMenuItem("Clear regex")
         clearRegex.addActionListener { changer.clear(FileChangerContainer.Type.REGEX) }
         add(clearRegex)
 
         add(JSeparator())
 
-        val show = JMenuItem(Settings.getLang("Show"))
+        val show = LMenuItem("Show")
         show.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK)
         show.setMnemonic('S')
         show.addActionListener {
@@ -97,15 +97,15 @@ class EditMenu : JMenu(Settings.getLang("Edit")) {
 
         add(JSeparator())
 
-        val loadTranslate = JMenuItem(Settings.getLang("Load translation"))
+        val loadTranslate = LMenuItem("Load translation")
         loadTranslate.addActionListener {  load(FileChangerContainer.Type.TRANSLATION) }
         add(loadTranslate)
 
-        val loadReplace = JMenuItem(Settings.getLang("Load rename"))
+        val loadReplace = LMenuItem("Load rename")
         loadReplace.addActionListener { load(FileChangerContainer.Type.REPLACEMENT) }
         add(loadReplace)
 
-        val loadRegex = JMenuItem(Settings.getLang("Load regex"))
+        val loadRegex = LMenuItem("Load regex")
         loadRegex.addActionListener { load(FileChangerContainer.Type.REGEX) }
         add(loadRegex)
     }
