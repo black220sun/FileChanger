@@ -1,5 +1,6 @@
 package gui.tabs
 
+import settings.Settings
 import java.io.File
 import javax.swing.JScrollPane
 import javax.swing.JTable
@@ -13,7 +14,8 @@ class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
     }
 
     private class ResultModel(files: Collection<Collection<File>>) : AbstractTableModel() {
-        val columns = arrayOf("Old name", "Old path", "New name", "New path")
+        val columns = arrayOf(Settings.getLang("Old name"), Settings.getLang("Old path"),
+                Settings.getLang("New name"), Settings.getLang("New path"))
         val data = createData(files)
 
         private fun createData(files: Collection<Collection<File>>): Collection<Collection<String>> {

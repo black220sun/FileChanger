@@ -34,7 +34,9 @@ class MainView : JFrame(Settings.getLang("File Changer")), WindowListener {
 
     fun close() {
         val result = JOptionPane.showConfirmDialog(this, Settings.getLang("Quit?"), "", JOptionPane.YES_NO_OPTION)
-        if (result == JOptionPane.OK_OPTION || result == JOptionPane.YES_OPTION)
+        if (result == JOptionPane.OK_OPTION || result == JOptionPane.YES_OPTION) {
+            Settings.saveLang()
             dispose()
+        }
     }
 }

@@ -1,5 +1,6 @@
 package gui.tabs
 
+import settings.Settings
 import javax.swing.JScrollPane
 import javax.swing.JTable
 import javax.swing.table.AbstractTableModel
@@ -12,7 +13,8 @@ class ReplacementsTab(replacements: Collection<Collection<String>>) : JScrollPan
     }
 
     private class ResultModel(replacements: Collection<Collection<String>>) : AbstractTableModel() {
-        val columns = arrayOf("From", "To", "Type")
+        val columns = arrayOf(Settings.getLang("From"), Settings.getLang("To"),
+                Settings.getLang("Type"))
         val data = replacements
 
         override fun getRowCount(): Int = data.size

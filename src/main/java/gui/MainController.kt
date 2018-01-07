@@ -3,6 +3,7 @@ package gui
 import gui.tabs.ReplacementsTab
 import gui.tabs.ResultsTab
 import gui.tabs.CapitalizeTab
+import gui.tabs.SettingsTab
 import settings.Settings
 import java.io.File
 import javax.swing.JComponent
@@ -41,5 +42,9 @@ object MainController {
 
     fun capitalization() {
         addTab(Settings.getLang("Capitalize"), CapitalizeTab())
+    }
+
+    fun settings() {
+        addTab(Settings.getLang("Settings"), SettingsTab())
     }
 }

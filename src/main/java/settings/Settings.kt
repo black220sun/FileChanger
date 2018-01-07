@@ -10,10 +10,11 @@ object Settings {
     val csv = ","
     private val home = System.getProperty("user.home")!!
     private val directory = home + separator + ".FileChanger" + separator
+    private val properties = HashMap<String, String>()
     private val lang = HashMap<String, String>()
-    private val settingsPath = directory + ".settings"
-    private lateinit var langPath: String
-    private lateinit var langName: String
+    private val settingsPath = directory + "settings"
+    val languages = HashMap<String, String>()
+    private val defaultLang = "English"
     init {
         val dir = File(directory)
         if (dir.isFile) {
@@ -28,30 +29,31 @@ object Settings {
     }
 
     private fun init() {
-        val fSettings = File(settingsPath)
-        val tmpTable = HashMap<String, String>()
-        if (!fSettings.exists())
-            return
-        val reader = FileReader(fSettings)
-        reader.readLines()
-                .filter { it.matches("[^$csv]+$csv[^$csv]+".toRegex()) }
-                .forEach {
-                    val parts = it.split(csv)
-                    tmpTable.put(parts[0], parts[1])
-                }
-        reader.close()
-        langName = tmpTable.getOrDefault("langName", "English")
-        langPath = tmpTable.getOrDefault("langPath", "")
-        if (!langPath.isEmpty())
-            initLang()
+        initFile(settingsPath, properties)
+        val langAvalPath = properties["languages"]
+        if (langAvalPath != null)
+            initLang(langAvalPath)
     }
 
-    private fun initLang() {
+    private fun initLang(langPath: String) {
+        initFile(langPath, languages)
+        val lang = properties["langName"]
+        if (lang == null) {
+            properties.put("langName", defaultLang)
+            properties.put("langActive", defaultLang)
+            return
+        }
+        properties.put("langActive", lang)
+        val path = languages[lang] ?: return
+        initFile(path, this.lang)
+    }
+
+    private fun initFile(filePath: String, table: HashMap<String, String>) {
         val path =
-                if (langPath.matches("^(/)|(\\w:\\\\).*".toRegex()))
-                    langPath
+                if (filePath.matches("^(/|\\w:\\\\).*".toRegex()))
+                    filePath
                 else
-                    directory + langPath
+                    directory + filePath
         val file = File(path)
         if (!file.exists() || !file.isFile)
             return
@@ -60,12 +62,45 @@ object Settings {
                 .filter { it.matches("[^$csv]+$csv[^$csv]+".toRegex()) }
                 .forEach {
                     val parts = it.split(csv)
-                    lang.put(parts[0], parts[1])
+                    table.put(parts[0], parts[1])
                 }
         reader.close()
     }
 
-    fun getLangName(): String = langName
+    fun getLang(key: String): String {
+        return if (lang.containsKey(key))
+            lang[key]!!
+        else {
+            lang.put(key, key)
+            key
+        }
+    }
 
-    fun getLang(key: String): String = lang.getOrDefault(key, key)
+    fun saveLang() {
+        val langName = properties["langActive"]
+        val filePath = languages[langName] ?: return
+        val path =
+                if (filePath.matches("^(/|\\w:\\\\).*".toRegex()))
+                    filePath
+                else
+                    directory + filePath
+        val writer = FileWriter(File(path))
+        lang.forEach { key, value -> writer.appendln("$key$csv$value") }
+        writer.close()
+    }
+
+    fun save() {
+        val writer = FileWriter(File(settingsPath))
+        properties.forEach { key, value ->  writer.appendln("$key$csv$value")}
+        writer.close()
+    }
+
+    fun getProperty(key: String): String? = properties[key]
+
+    fun setProperty(key: String, value: String) {
+        if (check(key))
+            properties.put(key, value)
+    }
+    //TODO(implement check for key change availability)
+    private fun check(key: String) : Boolean = true
 }
