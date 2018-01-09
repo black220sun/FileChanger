@@ -18,7 +18,7 @@ class EditMenu : LMenu("Edit") {
         setMnemonic('E')
 
         val translate = LMenuItem("Translate")
-        translate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK)
+        translate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK + ActionEvent.CTRL_MASK)
         translate.setMnemonic('T')
         translate.addActionListener {
             val files = changer.getFiles()
@@ -29,7 +29,7 @@ class EditMenu : LMenu("Edit") {
         add(translate)
 
         val rename = LMenuItem("Rename")
-        rename.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK)
+        rename.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK)
         rename.setMnemonic('R')
         rename.addActionListener {
             val files = changer.getFiles()
@@ -40,7 +40,7 @@ class EditMenu : LMenu("Edit") {
         add(rename)
 
         val regex = LMenuItem("Regex rename")
-        regex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK)
+        regex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK)
         regex.setMnemonic('g')
         regex.addActionListener {
             val files = changer.getFiles()
@@ -53,19 +53,19 @@ class EditMenu : LMenu("Edit") {
         add(JSeparator())
 
         val addTranslate = LMenuItem("Add translation")
-        addTranslate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK)
+        addTranslate.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK)
         addTranslate.setMnemonic('l')
         addTranslate.addActionListener { getLines(FileChangerContainer.Type.TRANSLATION) }
         add(addTranslate)
 
         val addReplace = LMenuItem("Add rename")
-        addReplace.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK)
+        addReplace.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK)
         addReplace.setMnemonic('n')
         addReplace.addActionListener { getLines(FileChangerContainer.Type.REPLACEMENT) }
         add(addReplace)
 
         val addRegex = LMenuItem("Add regex")
-        addRegex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK)
+        addRegex.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK)
         addRegex.setMnemonic('g')
         addRegex.addActionListener { getLines(FileChangerContainer.Type.REGEX) }
         add(addRegex)
