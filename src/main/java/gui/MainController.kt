@@ -1,9 +1,6 @@
 package gui
 
-import gui.tabs.ReplacementsTab
-import gui.tabs.ResultsTab
-import gui.tabs.CapitalizeTab
-import gui.tabs.SettingsTab
+import gui.tabs.*
 import settings.Settings
 import java.io.File
 import javax.swing.JComponent
@@ -44,6 +41,11 @@ object MainController {
         addTab(Settings.getLang("Capitalize"), CapitalizeTab())
     }
 
+
+    fun tagsView() {
+        addTab(Settings.getLang("Mp3 info"), TagsViewTab())
+    }
+
     fun settings() {
         val index = view.tabPanel.indexOfTab("Settings")
         if (index > 0)
@@ -51,4 +53,5 @@ object MainController {
         else
             addTab(Settings.getLang("Settings"), SettingsTab())
     }
+
 }

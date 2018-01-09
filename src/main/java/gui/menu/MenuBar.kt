@@ -8,6 +8,7 @@ class MenuBar : JMenuBar() {
         add(EditMenu())
         add(MoveMenu())
         add(RenameMenu())
+        add(TagsMenu())
         add(SettingsMenu())
     }
 }
