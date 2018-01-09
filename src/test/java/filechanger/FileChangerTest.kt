@@ -1,3 +1,5 @@
+package filechanger
+
 import filechanger.FileChanger
 import org.junit.Test
 import java.io.File

@@ -1,4 +1,5 @@
-import filechanger.FileChangerContainer
+package filechanger
+
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
