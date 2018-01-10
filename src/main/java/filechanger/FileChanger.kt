@@ -13,7 +13,6 @@ class FileChanger {
     private val translationPath = "translate.csv"
     private val replacementPath = "replace.csv"
     private val replacementRegexPath = "replace_regex.csv"
-    private val pathRegex = "([^$sep]+)?($sep[^$sep]+)*".toRegex()
 
     fun loadReplacement(path: String = replacementPath) {
         load(replacement, path)
@@ -93,8 +92,6 @@ class FileChanger {
     }
 
     fun move(file: File, path: String, force: Boolean = true): File {
-        if (!path.matches(pathRegex))
-            return file
         if (!File(path).exists() && force)
             File(path).mkdirs()
         val new = File("$path$sep${file.name}")
@@ -115,8 +112,6 @@ class FileChanger {
     }
 
     fun moveByName(file: File, path: String = "", from: String = "", to: String = " - ", force: Boolean = true): File {
-        if (!path.matches(pathRegex))
-            return file
         if (from == "" && to == "")
             return file
         val name = file.nameWithoutExtension

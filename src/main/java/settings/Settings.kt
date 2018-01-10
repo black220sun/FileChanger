@@ -37,7 +37,7 @@ object Settings {
 
     fun initFile(filePath: String, table: HashMap<String, String>) {
         val path =
-                if (filePath.matches("^(/|\\w:\\\\).*".toRegex()))
+                if (filePath.matches("^(/|[A-H]:\\\\).*".toRegex()))
                     filePath
                 else
                     directory + filePath
