@@ -34,7 +34,7 @@ class Language {
         val langName = Settings.getProperty("langActive")
         val filePath = languages[langName] ?: return
         val path =
-                if (filePath.matches("^(/|\\w:\\\\).*".toRegex()))
+                if (filePath.matches("^(/|[A-H]:\\\\).*".toRegex()))
                     filePath
                 else
                     Settings.getDirectory() + filePath
