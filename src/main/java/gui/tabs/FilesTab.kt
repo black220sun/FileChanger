@@ -6,6 +6,7 @@ import javax.swing.*
 class FilesTab: JScrollPane() {
     init {
         val table = JTable(TableModel)
+        table.autoCreateRowSorter = true
         horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         viewport.view = table

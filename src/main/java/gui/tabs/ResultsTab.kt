@@ -10,6 +10,7 @@ import javax.swing.table.AbstractTableModel
 class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
     init {
         val table = JTable(ResultModel(files))
+        table.autoCreateRowSorter = true
         viewport.view = table
     }
 

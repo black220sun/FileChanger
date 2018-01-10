@@ -18,24 +18,18 @@ object TableModel: AbstractTableModel() {
 
     override fun getRowCount(): Int = data.size
 
-    override fun getValueAt(row: Int, col: Int): Any = data[row][col]
+    override fun getValueAt(row: Int, col: Int): Any {
+        return when (col) {
+            in 0..2 -> data[row][col] as String
+            3 -> Date(data[row][col] as Long)
+            else -> data[row][col] as Long
+        }
+    }
 
     override fun getColumnClass(col: Int): Class<*> = getValueAt(0, col).javaClass
 
-    fun add(file: File) {
-        if (changer.getFiles().contains(file))
-            return
-        changer.addFile(file)
-        data.add(fileToList(file))
-        fireTableDataChanged()
-    }
-
-    private fun fileToList(file: File): ArrayList<Any> {
-        val name = file.name
-        val type = if (file.isDirectory) "dir" else file.extension
-        val path = file.absoluteFile.parentFile.absolutePath
-        val date = Date(file.lastModified())
-        var space = file.length()
+    private fun sizeToString(size: Long): String {
+        var space = size
         var total = ""
         val kb = 1024
         val mb = kb * kb
@@ -61,7 +55,24 @@ object TableModel: AbstractTableModel() {
             measure = "b"
         }
         total += measure
-        return arrayListOf(name, type, path, date, total)
+        return total
+    }
+
+    fun add(file: File) {
+        if (changer.getFiles().contains(file))
+            return
+        changer.addFile(file)
+        data.add(fileToList(file))
+        fireTableDataChanged()
+    }
+
+    private fun fileToList(file: File): ArrayList<Any> {
+        val name = file.name
+        val type = if (file.isDirectory) "dir" else file.extension
+        val path = file.absoluteFile.parentFile.absolutePath
+        val date = file.lastModified()
+        val space = file.length()
+        return arrayListOf(name, type, path, date, space)
     }
 
     fun clear() {

@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel
 class ReplacementsTab(replacements: Collection<Collection<String>>) : JScrollPane() {
     init {
         val table = JTable(ResultModel(replacements))
+        table.autoCreateRowSorter = true
         viewport.view = table
     }
 
