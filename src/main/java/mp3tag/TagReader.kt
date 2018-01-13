@@ -89,6 +89,8 @@ object TagReader {
             return -1
         }
         val size = header[7] + (header[6] + (header[5] + header[4] * 128) * 128) * 128
+        if (size < 0)
+            return -1
         val value = ByteArray(size)
         read(value)
         tags.put(name, getText(value))
@@ -103,8 +105,8 @@ object TagReader {
             val text = String(value.copyOfRange(1, index), it)
             if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+")))
                 return text
-            if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+.?")))
-                return text.dropLast(1) + String(ByteArray(1, { value.last() } ), defaultCharset)
+            if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+.")))
+                return text.dropLast(1) + String(ByteArray(1, { value.last() }), defaultCharset)
         }
         return ""
     }

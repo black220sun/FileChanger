@@ -37,6 +37,7 @@ class TagsViewTab : JScrollPane() {
             val track = tags[tr.track]
             list.add(when {
                 track == null -> 0
+                track == "" -> 0
                 track.matches(Regex("\\d*")) -> track.toInt()
                 else -> track.filter { it in '0'..'9' }.toInt()
             })

@@ -19,6 +19,8 @@ object TableModel: AbstractTableModel() {
     override fun getRowCount(): Int = data.size
 
     override fun getValueAt(row: Int, col: Int): Any {
+        if (data.size == 0)
+            return ""
         return when (col) {
             in 0..2 -> data[row][col] as String
             3 -> Date(data[row][col] as Long)
