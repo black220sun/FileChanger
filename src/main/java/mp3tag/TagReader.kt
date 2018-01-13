@@ -9,7 +9,7 @@ object TagReader {
     private val charsets = arrayOf("UTF-16", "UTF-8", "UTF-16LE", "UTF-16BE", "ISO-8859-1",
             "US-ASCII", "windows-1251", "windows-1252")
             .map { charset(it)  }
-    private val defaultCharset = charset("UTF8")
+    private val defaultCharset = charset("UTF-8")
     private val id3 = "ID3"
     val title = "TIT2"
     val artist = "TPE1"
