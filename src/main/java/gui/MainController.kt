@@ -13,7 +13,6 @@ object MainController {
         registerTab("Mp3 info", Class.forName("gui.tabs.TagsViewTab"))
         registerTab("Capitalize", Class.forName("gui.tabs.CapitalizeTab"))
         registerTab("Tags processing", Class.forName("gui.tabs.TagsProcessingTab"))
-        registerTab("1", Class.forName("mp3tag.TagReader"))
     }
 
     fun show() {
