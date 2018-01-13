@@ -13,10 +13,18 @@ class TagsViewTab : JScrollPane() {
         val table = JTable(TagsModel())
         table.autoCreateRowSorter = true
         viewport.view = table
+        val columns = table.columnModel
+        for (i in 0 until table.columnCount) {
+            columns.getColumn(i).preferredWidth = when (i) {
+                0 -> 350
+                in 1..3 -> 250
+                else -> 70
+            }
+        }
     }
 
     private class TagsModel : AbstractTableModel() {
-        val columns = arrayOf("File", "Title", "Artist", "Album", "№", "Genre")
+        val columns = arrayOf("File", "Title", "Artist", "Album", "Year", "№", "Genre")
                 .map { Settings.getLang(it) }
         val data = ArrayList<ArrayList<Any?>>()
 
@@ -34,12 +42,13 @@ class TagsViewTab : JScrollPane() {
             list.add(tags[tr.title])
             list.add(tags[tr.artist])
             list.add(tags[tr.album])
+            list.add(tags[tr.year]?.toInt())
             val track = tags[tr.track]
             list.add(when {
                 track == null -> 0
                 track == "" -> 0
                 track.matches(Regex("\\d*")) -> track.toInt()
-                else -> track.filter { it in '0'..'9' }.toInt()
+                else -> (track.subSequence(0, track.indexOfFirst { it !in '0'..'9' }) as String).toInt()
             })
             list.add(tags[tr.genre])
             data.add(list)

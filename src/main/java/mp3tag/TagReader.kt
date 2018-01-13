@@ -16,6 +16,7 @@ object TagReader {
     val track = "TRCK"
     val album = "TALB"
     val genre = "TCON"
+    val year = "TYER"
 
     fun readTags(file: File): HashMap<String, String> {
         val tags = HashMap<String, String>()
@@ -84,10 +85,12 @@ object TagReader {
         val header = ByteArray(10)
         if (read(header) == -1)
             return -1
-        val name = String(header.copyOfRange(0, 4))
         if (header.all { it == (0).toByte() }) {
             return -1
         }
+        val name = String(header.copyOfRange(0, 4))
+        if (!name.matches(Regex("[A-Z0-9]{4}")))
+            return -1
         val size = header[7] + (header[6] + (header[5] + header[4] * 128) * 128) * 128
         if (size < 0)
             return -1
@@ -102,11 +105,11 @@ object TagReader {
         if (index < 1)
             return ""
         charsets.forEach {
-            val text = String(value.copyOfRange(1, index), it)
-            if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+")))
-                return text
+            val start = "a".toByteArray(it).size / 2
+            val end = if (start == 0) 1 else 0
+            val text = String(value.copyOfRange(1, index + end), it)
             if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+.")))
-                return text.dropLast(1) + String(ByteArray(1, { value.last() }), defaultCharset)
+                return text.dropLast(1) + String(value.copyOfRange(index - start, index + end), it)
         }
         return ""
     }
