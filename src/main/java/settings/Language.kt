@@ -26,14 +26,7 @@ class Language {
         Settings.loadFile(path, this.lang)
     }
 
-    fun getLang(key: String): String {
-        return if (lang.containsKey(key))
-            lang[key]!!
-        else {
-            lang.put(key, key)
-            key
-        }
-    }
+    fun getLang(key: String): String = lang.getOrPut(key, {key})
 
     fun saveLang() {
         val langName = Settings.getProperty("langActive")
