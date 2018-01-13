@@ -22,7 +22,7 @@ class TagReaderTest {
 
         val tags = reader.readTags(file)
         val name = tags["TIT2"]!!
-        tags["TIT2"] = "Тест"
+        tags["TIT2"] = "Test"
 
         reader.writeTags(file, tags)
         val new = reader.readTags(file)
