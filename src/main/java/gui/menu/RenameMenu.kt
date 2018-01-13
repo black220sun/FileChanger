@@ -10,7 +10,7 @@ class RenameMenu : LMenu("Rename") {
 
         val cap = LMenuItem("Capitalize")
         cap.setMnemonic('C')
-        cap.addActionListener { MainController.capitalization() }
+        cap.addActionListener { MainController.addTab("Capitalize") }
         add(cap)
     }
 }
