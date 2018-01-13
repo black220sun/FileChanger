@@ -7,9 +7,14 @@ class Language {
     private val lang = HashMap<String, String>()
     private val languages = HashMap<String, String>()
     private val defaultLang = "English"
+    val defaultCharset = Charsets.UTF_8
+
+    init {
+        languages.put(defaultLang, defaultLang)
+    }
 
     fun initLang(langPath: String) {
-        Settings.initFile(langPath, languages)
+        Settings.loadFile(langPath, languages)
         val lang = Settings.getProperty("langName")
         if (lang == null) {
             Settings.setProperty("langName", defaultLang)
@@ -18,7 +23,7 @@ class Language {
         }
         Settings.setProperty("langActive", lang)
         val path = languages[lang] ?: return
-        Settings.initFile(path, this.lang)
+        Settings.loadFile(path, this.lang)
     }
 
     fun getLang(key: String): String {
@@ -33,18 +38,11 @@ class Language {
     fun saveLang() {
         val langName = Settings.getProperty("langActive")
         val filePath = languages[langName] ?: return
-        val path =
-                if (filePath.matches("^(/|[A-H]:\\\\).*".toRegex()))
-                    filePath
-                else
-                    Settings.getDirectory() + filePath
-        val writer = FileWriter(File(path))
-        lang.forEach { key, value -> writer.appendln("$key${Settings.csv}$value") }
-        writer.close()
+        Settings.saveFile(filePath, lang)
     }
 
     fun getLanguages(): Array<String> = languages.keys.toTypedArray()
-    fun getLangName(): String = Settings.getProperty("langName")!!
+    fun getLangName(): String = Settings.getProperty("langName") ?: defaultLang
     fun setLangName(value: String) {
         if (languages.containsKey(value))
             Settings.setProperty("langName", value)

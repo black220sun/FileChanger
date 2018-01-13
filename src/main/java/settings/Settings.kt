@@ -1,8 +1,6 @@
 package settings
 
-import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
+import java.io.*
 import javax.swing.JOptionPane
 
 object Settings {
@@ -22,20 +20,19 @@ object Settings {
                     "Error", JOptionPane.ERROR_MESSAGE)
             System.exit(1)
         }
-        if (!dir.exists()) {
+        if (!dir.exists())
             dir.mkdirs()
-        } else
-            init()
+        init()
     }
 
     private fun init() {
-        initFile(settingsPath, properties)
+        loadFile(settingsPath, properties)
         val langAvalPath = properties["languages"]
         if (langAvalPath != null)
             lang.initLang(langAvalPath)
     }
 
-    fun initFile(filePath: String, table: HashMap<String, String>) {
+    fun loadFile(filePath: String, table: HashMap<String, String>) {
         val path =
                 if (filePath.matches("^(/|[A-H]:\\\\).*".toRegex()))
                     filePath
@@ -44,7 +41,8 @@ object Settings {
         val file = File(path)
         if (!file.exists() || !file.isFile)
             return
-        val reader = FileReader(file)
+//        val reader = FileReader(file)
+        val reader = InputStreamReader(file.inputStream(), lang.defaultCharset)
         reader.readLines()
                 .filter { it.matches("[^$csv]+$csv[^$csv]+".toRegex()) }
                 .forEach {
@@ -54,10 +52,19 @@ object Settings {
         reader.close()
     }
 
+    fun saveFile(filePath: String, table: HashMap<String, String>) {
+        val path =
+                if (filePath.matches("^(/|[A-H]:\\\\).*".toRegex()))
+                    filePath
+                else
+                    directory + filePath
+        OutputStreamWriter(FileOutputStream(path), lang.defaultCharset).use {
+            table.forEach { key, value -> it.appendln("$key$csv$value") }
+        }
+    }
+
     fun save() {
-        val writer = FileWriter(File(settingsPath))
-        properties.forEach { key, value ->  writer.appendln("$key$csv$value")}
-        writer.close()
+        saveFile(settingsPath, properties)
     }
 
     fun getProperty(key: String): String? = properties[key]
