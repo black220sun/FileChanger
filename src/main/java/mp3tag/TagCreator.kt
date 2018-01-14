@@ -50,8 +50,10 @@ object TagCreator {
         val path = file.absoluteFile.parentFile.absolutePath
         val extension = if (file.extension == "") "" else "." + file.extension
         val newFile = File(path + separator + new + extension)
-        if (force)
+        if (force) {
+            newFile.absoluteFile.parentFile.mkdirs()
             file.renameTo(newFile)
+        }
         return newFile
     }
 
