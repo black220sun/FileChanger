@@ -41,6 +41,7 @@ object MainController {
 
     private fun registerTab(title: String, tab: Class<*>) {
         try {
+            @Suppress("UNCHECKED_CAST")
             tab as Class<JComponent>
         } catch (e: Exception) {
             return

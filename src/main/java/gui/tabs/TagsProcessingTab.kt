@@ -11,8 +11,6 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JTextField
 import java.io.File
-import java.util.stream.Collector
-import java.util.stream.Collectors
 
 class TagsProcessingTab : JPanel() {
     init {
@@ -77,6 +75,7 @@ class TagsProcessingTab : JPanel() {
             val capitalize = (capsFirst + caps).map { it.isSelected }
             val force = Settings.getForce("forceTag")
             val files = TableModel.changer.getFiles()
+            @Suppress("UNCHECKED_CAST")
             val result = files.parallelStream().map {
                 TagCreator.tagToName(it, pattern.text,
                         force, capitalize,
@@ -91,6 +90,7 @@ class TagsProcessingTab : JPanel() {
             val capitalize = (capsFirst + caps).map { it.isSelected }
             val force = Settings.getForce("forceTag")
             val files = TableModel.changer.getFiles()
+            @Suppress("UNCHECKED_CAST")
             val new = files.parallelStream().map {
                 TagCreator.nameToTag(it, pattern.text,
                         force, capitalize,

@@ -29,6 +29,7 @@ class TagResultsTab(files: List<List<Any>>) : JScrollPane() {
                 .map { Settings.getLang(it) }
         val data = createData(result)
 
+        @Suppress("UNCHECKED_CAST")
         private fun createData(result: List<List<Any>>): List<List<Any?>> {
             val data = ArrayList<ArrayList<Any?>>()
             val olds = result[0] as List<File>
