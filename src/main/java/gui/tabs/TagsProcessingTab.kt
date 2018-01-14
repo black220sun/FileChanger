@@ -32,14 +32,14 @@ class TagsProcessingTab : JPanel() {
         panel.add(capAllFirst)
         val capAll = LCheckBox("All")
         panel.add(capAll)
-        val capTitleFirst = LCheckBox("Title first letter")
+        val capTitleFirst = LCheckBox("Title first letter", true)
         val capArtistFirst = LCheckBox("Artist first letter")
-        val capAlbumFirst = LCheckBox("Album first letter")
-        val capGenreFirst = LCheckBox("Genre first letter")
+        val capAlbumFirst = LCheckBox("Album first letter", true)
+        val capGenreFirst = LCheckBox("Genre first letter", true)
         val capsFirst = arrayOf(capTitleFirst, capArtistFirst, capAlbumFirst, capGenreFirst)
         capsFirst.forEach { panel.add(it) }
         val capTitle = LCheckBox("Title")
-        val capArtist = LCheckBox("Artist")
+        val capArtist = LCheckBox("Artist", true)
         val capAlbum = LCheckBox("Album")
         val capGenre = LCheckBox("Genre")
         val caps = arrayOf(capTitle, capArtist, capAlbum, capGenre)
@@ -67,23 +67,37 @@ class TagsProcessingTab : JPanel() {
         panel.add(delim)
 
         val delimiter = JTextField("")
+        delimiter.isEnabled = false
         panel.add(delimiter)
+
+        delim.addActionListener { delimiter.isEnabled = delim.isSelected }
 
         val tagName = LButton("Tags to name")
         tagName.addActionListener {
             val capitalize = (capsFirst + caps).map { it.isSelected }
             val force = Settings.getForce("forceTag")
             val files = TableModel.changer.getFiles()
-            val result = files.map {
+            val result = files.parallelStream().map {
                 TagCreator.tagToName(it, pattern.text,
                         force, capitalize,
                         if (delim.isSelected) delimiter.text else " ")
-            }
+            }.toArray().toList() as List<File>
             MainController.results(arrayListOf(files,result), force)
         }
         panel.add(tagName)
 
         val nameTag = LButton("Name to tags")
+        nameTag.addActionListener {
+            val capitalize = (capsFirst + caps).map { it.isSelected }
+            val force = Settings.getForce("forceTag")
+            val files = TableModel.changer.getFiles()
+            val new = files.parallelStream().map {
+                TagCreator.nameToTag(it, pattern.text,
+                        force, capitalize,
+                        if (delim.isSelected) delimiter.text else " ")
+            }.toArray().toList() as List<Map<String, String>>
+            MainController.tags(arrayListOf(files, new))
+        }
         panel.add(nameTag)
 
         add(panel)

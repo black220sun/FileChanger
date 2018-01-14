@@ -65,4 +65,8 @@ object MainController {
         else
             addTab(Settings.getLang("Settings"), SettingsTab())
     }
+
+    fun tags(result: ArrayList<List<Any>>) {
+        addTab(Settings.getLang("Results"), TagResultsTab(result))
+    }
 }

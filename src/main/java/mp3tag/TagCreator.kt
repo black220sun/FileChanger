@@ -2,14 +2,15 @@ package mp3tag
 
 import settings.Settings
 import java.io.File
+import java.util.regex.Pattern
 import mp3tag.TagReader as tr
 
 object TagCreator {
     private val separator = Settings.separator
 
-    fun tagToName(file: File, pattern: String, force: Boolean = true,
-                  capitalize: Collection<Boolean> = List(8, {false}),
-                  delimiter: String = " "): File {
+    fun tagToName(file: File, pattern: String, force: Boolean,
+                  capitalize: List<Boolean>,
+                  delimiter: String): File {
         val tags = tr.readTags(file)
 
         var artist = tags.getOrDefault(tr.artist, "")
@@ -23,16 +24,23 @@ object TagCreator {
             track.matches(Regex("\\d*")) -> track
             else -> track.subSequence(0, track.indexOfFirst { it !in '0'..'9' }) as String
         }
-        when {
-            capitalize.elementAt(7) -> genre = genre.split(delimiter).joinToString(delimiter) { it.capitalize() }
-            capitalize.elementAt(3) -> genre = genre.capitalize()
-            capitalize.elementAt(6) -> album = album.split(delimiter).joinToString(delimiter) { it.capitalize() }
-            capitalize.elementAt(2) -> album = album.capitalize()
-            capitalize.elementAt(5) -> title = title.split(delimiter).joinToString(delimiter) { it.capitalize() }
-            capitalize.elementAt(1) -> title = title.capitalize()
-            capitalize.elementAt(4) -> artist = artist.split(delimiter).joinToString(delimiter) { it.capitalize() }
-            capitalize.elementAt(0) -> artist = artist.capitalize()
-        }
+        if (capitalize[7])
+            genre = genre.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[3])
+            genre = genre.capitalize()
+        if (capitalize[6])
+            album = album.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[2])
+            album = album.capitalize()
+        if (capitalize[5])
+            artist = artist.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[1])
+            artist = artist.capitalize()
+        if (capitalize[4])
+            title = title.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[0])
+            title = title.capitalize()
+
         val new = pattern.replace("%a", artist)
                 .replace("%y", year)
                 .replace("%m", album)
@@ -45,5 +53,75 @@ object TagCreator {
         if (force)
             file.renameTo(newFile)
         return newFile
+    }
+
+    fun nameToTag(file: File, pattern: String, force: Boolean, capitalize: List<Boolean>, delimiter: String): Map<String, String> {
+        val tags = tr.readTags(file)
+        val matcher = Pattern.compile("%[amygnt]").matcher(pattern)
+        val regex = pattern.replace(Regex("%[amygnt]"), "(.*)").toRegex()
+        var name = if (pattern.contains(separator)) file.absoluteFile.parentFile.name + separator else ""
+        name += file.nameWithoutExtension
+        if (!name.matches(regex))
+            return tags
+
+        var artist = ""
+        var title = ""
+        var album = ""
+        var genre = ""
+        var year = ""
+        var track = ""
+        var i = 0
+        var j = 0
+        while (true) {
+            var value = ""
+            while (pattern[i] == name[j]) {
+                ++i
+                ++j
+            }
+            if (pattern[i] == '%' && pattern[i + 1] in arrayOf('a', 'm', 'y', 'g', 'n', 't')) {
+                i += 2
+                if (i >= pattern.length)
+                    value = name.substring(j)
+                else
+                    while (name[j] != pattern[i])
+                        value += name[j++]
+            }
+            if (matcher.find())
+                when (matcher.group()) {
+                    "%a" -> artist = value
+                    "%g" -> genre = value
+                    "%m" -> album = value
+                    "%n" -> title = value
+                    "%t" -> track = value
+                    else -> year = value
+                }
+            if (i >= pattern.length)
+                break
+        }
+        if (capitalize[7])
+            genre = genre.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[3])
+            genre = genre.capitalize()
+        if (capitalize[6])
+            album = album.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[2])
+            album = album.capitalize()
+        if (capitalize[5])
+            artist = artist.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[1])
+            artist = artist.capitalize()
+        if (capitalize[4])
+            title = title.split(delimiter).joinToString(delimiter) { it.capitalize() }
+        else if (capitalize[0])
+            title = title.capitalize()
+        if (artist.isNotEmpty()) tags.put(tr.artist, artist)
+        if (album.isNotEmpty()) tags.put(tr.album, album)
+        if (genre.isNotEmpty()) tags.put(tr.genre, genre)
+        if (title.isNotEmpty()) tags.put(tr.title, title)
+        if (track.isNotEmpty()) tags.put(tr.track, track)
+        if (year.isNotEmpty()) tags.put(tr.year, year)
+        if (force)
+            tr.writeTags(file, tags)
+        return tags.filterKeys { it.matches(Regex("T(IT2|PE1|RCK|YER|ALB|CON)")) }
     }
 }
