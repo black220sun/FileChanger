@@ -42,7 +42,7 @@ class TagsViewTab : JScrollPane() {
             list.add(tags[tr.title])
             list.add(tags[tr.artist])
             list.add(tags[tr.album])
-            val year = tags[tr.year]
+            val year = if (tags["version"] == "4") tags[tr.date] else tags[tr.year]
             list.add(when {
                 year == null -> 0
                 year == "" -> 0

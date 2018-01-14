@@ -37,7 +37,7 @@ class TagResultsTab(files: List<List<Any>>) : JScrollPane() {
             for (i in 0 until olds.size) {
                 val old = olds[i].absoluteFile
                 val new = news[i]
-                val year = new[tr.year]
+                val year = if (new["version"] == "4") new[tr.date] else new[tr.year]
                 val intYear = when {
                     year == null -> 0
                     year == "" -> 0

@@ -14,6 +14,7 @@ object TagReader {
     val album = "TALB"
     val genre = "TCON"
     val year = "TYER"
+    val date = "TDRC"
     enum class Encoding {
         ISO, UTF16LE, UTF16BE, UTF8
     }
@@ -106,7 +107,8 @@ object TagReader {
             return -1
         val value = ByteArray(size)
         read(value)
-        tags.put(name, getText(value))
+        val text = getText(value)
+        tags.put(name, text)
         return total - 10 - size
     }
 
@@ -116,7 +118,8 @@ object TagReader {
             return ""
         val start = if (value[0].toInt() == 1) 3 else 1
         val newValue = value.copyOfRange(start, index)
-        var text = String(newValue, charsets[value[0]]!!)
+        val charset = charsets[value[0]] ?: return String(value, Charset.forName("UTF-8"))
+        var text = String(newValue, charset)
         if (text.last() == 0.toChar())
             text = text.dropLast(1)
         val regex = Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+")
