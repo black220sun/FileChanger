@@ -6,10 +6,7 @@ import java.io.RandomAccessFile
 import java.nio.charset.Charset
 
 object TagReader {
-    private val charsets = arrayOf("UTF-16", "UTF-8", "UTF-16LE", "UTF-16BE", "ISO-8859-1",
-            "US-ASCII", "windows-1251", "windows-1252")
-            .map { charset(it)  }
-    private val defaultCharset = charset("UTF-8")
+    private val charsets = HashMap<Byte, Charset>()
     private val id3 = "ID3"
     val title = "TIT2"
     val artist = "TPE1"
@@ -17,6 +14,17 @@ object TagReader {
     val album = "TALB"
     val genre = "TCON"
     val year = "TYER"
+    enum class Encoding {
+        ISO, UTF16LE, UTF16BE, UTF8
+    }
+    private val defaultCharset = Encoding.UTF8
+
+    init {
+        charsets.put(0, Charset.forName("ISO-8859-1"))
+        charsets.put(1, Charset.forName("UTF-16LE"))
+        charsets.put(2, Charset.forName("UTF-16BE"))
+        charsets.put(3, Charset.forName("UTF-8"))
+    }
 
     fun readTags(file: File): HashMap<String, String> {
         val tags = HashMap<String, String>()
@@ -41,9 +49,10 @@ object TagReader {
         return tags
     }
 
-    fun writeTags(file: File, tags: HashMap<String, String>, charset: Charset = defaultCharset) {
+    fun writeTags(file: File, tags: HashMap<String, String>, charset: Encoding = defaultCharset) {
         if (!file.exists())
             return
+        val num = charset.ordinal.toByte()
         val header = ByteArray(10)
         var total = 0
         FileInputStream(file).use {
@@ -59,9 +68,10 @@ object TagReader {
             it.seek(10)
             tags.filter { it.key.matches(Regex("[A-Z0-9]{4}")) }.forEach {
                 key, value -> run {
-                var size = value.toByteArray(charset).size + 1
+                val bytes = (value + 0.toChar()).toByteArray(charsets[num]!!)
+                var size = bytes.size + 1
                 total -= 10 + size
-                if (total <= 0)
+                if (total < 0)
                     return@forEach
                 val arr = ByteArray(4)
                 for (i in 3 downTo 0) {
@@ -71,8 +81,8 @@ object TagReader {
                 it.write(key.toByteArray())
                 it.write(arr)
                 it.write(ByteArray(2))
-                it.write(ByteArray(1, {(3).toByte()}))
-                it.write(value.toByteArray(charset))
+                it.write(ByteArray(1, { num }))
+                it.write(bytes)
                 }
             }
             if (total > 0)
@@ -101,16 +111,21 @@ object TagReader {
     }
 
     private fun getText(value: ByteArray): String {
-        val index = value.lastIndex
-        if (index < 1)
+        val index = value.lastIndex + 1
+        if (index < 2)
             return ""
-        charsets.forEach {
-            val start = "a".toByteArray(it).size / 2
-            val end = if (start == 0) 1 else 0
-            val text = String(value.copyOfRange(1, index + end), it)
-            if (text.matches(Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+.")))
-                return text.dropLast(1) + String(value.copyOfRange(index - start, index + end), it)
-        }
-        return ""
+        val start = if (value[0].toInt() == 1) 3 else 1
+        val newValue = value.copyOfRange(start, index)
+        var text = String(newValue, charsets[value[0]]!!)
+        if (text.last() == 0.toChar())
+            text = text.dropLast(1)
+        val regex = Regex("[-A-Za-z0-9а-яА-ЯїєёЁъЪіЇЄІ,.+/\\\\_&?*%@!$#^=:'\"`~)( \t]+")
+        if (text.matches(regex))
+            return text
+        val cyrillicText = String(newValue, Charset.forName("windows-1251"))
+        return if (cyrillicText.matches(regex))
+            cyrillicText
+        else
+            ""
     }
 }

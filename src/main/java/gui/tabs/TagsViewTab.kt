@@ -42,7 +42,13 @@ class TagsViewTab : JScrollPane() {
             list.add(tags[tr.title])
             list.add(tags[tr.artist])
             list.add(tags[tr.album])
-            list.add(tags[tr.year]?.toInt())
+            val year = tags[tr.year]
+            list.add(when {
+                year == null -> 0
+                year == "" -> 0
+                year.matches(Regex("\\d*")) -> year.toInt()
+                else -> (year.subSequence(0, year.indexOfFirst { it !in '0'..'9' }) as String).toInt()
+            })
             val track = tags[tr.track]
             list.add(when {
                 track == null -> 0
