@@ -9,7 +9,8 @@ import javax.swing.table.AbstractTableModel
 import java.io.File
 
 class TagsViewTab : JScrollPane() {
-    private val table = JTable(TagsModel)
+    private val model = TagsModel()
+    private val table = JTable(model)
     init {
         table.autoCreateRowSorter = true
         viewport.view = table
@@ -26,13 +27,13 @@ class TagsViewTab : JScrollPane() {
     fun delete(force: Boolean) {
         table.selectedRows.forEach {
             val real = table.convertRowIndexToModel(it)
-            val file = TagsModel.delete(real)
+            val file = model.delete(real)
             if (force)
                 file.delete()
         }
     }
 
-    private companion object TagsModel : AbstractTableModel() {
+    private class TagsModel : AbstractTableModel() {
         val columns = arrayOf("File", "Title", "Artist", "Album", "Year", "№", "Genre")
                 .map { Settings.getLang(it) }
         val data = ArrayList<ArrayList<Any?>>()
@@ -80,7 +81,7 @@ class TagsViewTab : JScrollPane() {
             val res = if (col == 0)
                 data[row][col]
             else
-                data[row][col - 1]
+                data[row][col + 1]
             return res ?: ""
         }
 
