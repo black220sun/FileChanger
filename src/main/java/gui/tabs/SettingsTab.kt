@@ -22,8 +22,9 @@ class SettingsTab : JPanel() {
         val forceRename = LCheckBox("Rename", st.getForce("forceRename"))
         val forceMove = LCheckBox("Move", st.getForce("forceMove"))
         val forceTag = LCheckBox("Tags processing", st.getForce("forceTag"))
+        val forceDelete = LCheckBox("Delete", st.getForce("forceDelete"))
         val forceQuit = LCheckBox("Quit", st.getForce("forceQuit"))
-        val forces = arrayOf(forceRename, forceMove, forceTag, forceQuit)
+        val forces = arrayOf(forceRename, forceMove, forceTag, forceDelete, forceQuit)
         panel.add(forceAll)
         forceAll.addActionListener {
             forces.forEach {
@@ -48,6 +49,7 @@ class SettingsTab : JPanel() {
             st.setForce("forceMove", forceMove.isSelected)
             st.setForce("forceTag", forceTag.isSelected)
             st.setForce("forceQuit", forceQuit.isSelected)
+            st.setForce("forceDelete", forceDelete.isSelected)
             st.setSaveLoad(save.isSelected)
             st.save()
         }

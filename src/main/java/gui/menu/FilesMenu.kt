@@ -54,7 +54,14 @@ class FilesMenu: LMenu("Files") {
 
         val delete = LMenuItem("Delete from memory")
         delete.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.CTRL_MASK)
-        delete.addActionListener { MainController.delete(true) }
+        delete.addActionListener {
+            if (!Settings.getForce("forceDelete"))
+                if (JOptionPane.showConfirmDialog(parent.parent, Settings.getLang("Delete selected files"),
+                        Settings.getLang("Delete"), JOptionPane.YES_NO_OPTION)
+                        != JOptionPane.YES_OPTION)
+                    return@addActionListener
+            MainController.delete(true)
+        }
         add(delete)
 
         add(JSeparator())
