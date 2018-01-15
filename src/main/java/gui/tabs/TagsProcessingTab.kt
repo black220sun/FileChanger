@@ -70,15 +70,19 @@ class TagsProcessingTab : JPanel() {
 
         delim.addActionListener { delimiter.isEnabled = delim.isSelected }
 
+        val ignore = LCheckBox("Ignore empty tags", true)
+        panel.add(ignore)
+
         val tagName = LButton("Tags to name")
         tagName.addActionListener {
             val capitalize = (capsFirst + caps).map { it.isSelected }
             val force = Settings.getForce("forceTag")
             val files = TableModel.changer.getFiles()
+            val ignoreState = ignore.isSelected
             @Suppress("UNCHECKED_CAST")
             val result = files.parallelStream().map {
                 TagCreator.tagToName(it, pattern.text,
-                        force, capitalize,
+                        force, capitalize, ignoreState,
                         if (delim.isSelected) delimiter.text else " ")
             }.toArray().toList() as List<File>
             MainController.results(arrayListOf(files,result), force)

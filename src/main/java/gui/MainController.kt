@@ -30,8 +30,11 @@ object MainController {
 
     fun results(files: Collection<Collection<File>>, force: Boolean) {
         addTab(Settings.getLang("Results"), ResultsTab(files))
-        if (force)
+        if (force) {
+            TableModel.changer.removeFiles { it in files.elementAt(0) }
+            TableModel.changer.addFiles(files.elementAt(1))
             TableModel.update()
+        }
     }
 
     fun addTab(title: String) {

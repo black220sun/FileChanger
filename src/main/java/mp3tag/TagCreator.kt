@@ -9,14 +9,14 @@ object TagCreator {
     private val separator = Settings.separator
 
     fun tagToName(file: File, pattern: String, force: Boolean,
-                  capitalize: List<Boolean>,
+                  capitalize: List<Boolean>, ignore: Boolean,
                   delimiter: String): File {
         val tags = tr.readTags(file)
 
-        var artist = tags.getOrDefault(tr.artist, "")
-        var title = tags.getOrDefault(tr.title, "")
-        var album = tags.getOrDefault(tr.album, "")
-        var genre = tags.getOrDefault(tr.genre, "")
+        val artist = tags.getOrDefault(tr.artist, "")
+        val title = tags.getOrDefault(tr.title, "")
+        val album = tags.getOrDefault(tr.album, "")
+        val genre = tags.getOrDefault(tr.genre, "")
         val year = tags.getOrDefault(tr.year, "")
         var track = tags.getOrDefault(tr.track, "")
         track = when  {
@@ -24,23 +24,22 @@ object TagCreator {
             track.matches(Regex("\\d*")) -> track
             else -> track.subSequence(0, track.indexOfFirst { it !in '0'..'9' }) as String
         }
-        if (capitalize[7])
-            genre = genre.split(delimiter).joinToString(delimiter) { it.capitalize() }
-        else if (capitalize[3])
-            genre = genre.capitalize()
-        if (capitalize[6])
-            album = album.split(delimiter).joinToString(delimiter) { it.capitalize() }
-        else if (capitalize[2])
-            album = album.capitalize()
-        if (capitalize[5])
-            artist = artist.split(delimiter).joinToString(delimiter) { it.capitalize() }
-        else if (capitalize[1])
-            artist = artist.capitalize()
-        if (capitalize[4])
-            title = title.split(delimiter).joinToString(delimiter) { it.capitalize() }
-        else if (capitalize[0])
-            title = title.capitalize()
-
+        val values = arrayListOf(title, artist, album, genre, year, track)
+        val capFirst = capitalize.subList(0, 4)
+        val capAll = capitalize.subList(4, 8)
+        if (ignore) {
+            val patterns = arrayListOf("%n", "%t", "%m", "%g", "%y", "%t")
+            (0..5).forEach {
+                if (pattern.contains(patterns[it]) && values[it].isEmpty())
+                    return file
+            }
+        }
+        (0..3).forEach {
+            if (capFirst[it])
+                values[it] = values[it].capitalize()
+            else if (capAll[it])
+                values[it] = values[it].split(delimiter).joinToString(delimiter) { it.capitalize() }
+        }
         val new = pattern.replace("%a", artist)
                 .replace("%y", year)
                 .replace("%m", album)
@@ -121,9 +120,9 @@ object TagCreator {
         if (genre.isNotEmpty()) tags.put(tr.genre, genre)
         if (title.isNotEmpty()) tags.put(tr.title, title)
         if (track.isNotEmpty()) tags.put(tr.track, track)
-        if (year.isNotEmpty()) tags.put(tr.year, year)
+        if (year.isNotEmpty()) tags.put(if (tags["version"] == "4") tr.date else tr.year, year)
         if (force)
             tr.writeTags(file, tags)
-        return tags.filterKeys { it.matches(Regex("T(IT2|PE1|RCK|YER|ALB|CON)")) }
+        return tags
     }
 }
