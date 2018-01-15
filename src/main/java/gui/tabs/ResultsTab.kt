@@ -1,5 +1,6 @@
 package gui.tabs
 
+import gui.TableModel
 import settings.Settings
 import java.io.File
 import javax.swing.JScrollPane
@@ -8,10 +9,20 @@ import javax.swing.table.AbstractTableModel
 
 
 class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
+    private val model = ResultModel(files)
+    private val table = JTable(model)
     init {
-        val table = JTable(ResultModel(files))
         table.autoCreateRowSorter = true
         viewport.view = table
+    }
+
+    fun delete(force: Boolean) {
+        table.selectedRows.forEach {
+            val real = table.convertRowIndexToModel(it)
+            val file = model.delete(real)
+            if (force)
+                file.delete()
+        }
     }
 
     private class ResultModel(files: Collection<Collection<File>>) : AbstractTableModel() {
@@ -19,7 +30,7 @@ class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
                 .map { Settings.getLang(it) }
         val data = createData(files)
 
-        private fun createData(files: Collection<Collection<File>>): Collection<Collection<String>> {
+        private fun createData(files: Collection<Collection<File>>): ArrayList<ArrayList<String>> {
             val data = ArrayList<ArrayList<String>>()
             val olds = files.elementAt(0).toTypedArray()
             val news = files.elementAt(1).toTypedArray()
@@ -39,5 +50,15 @@ class ResultsTab(files: Collection<Collection<File>>) : JScrollPane() {
         override fun getValueAt(row: Int, col: Int): Any = data.elementAt(row).elementAt(col)
 
         override fun getColumnName(col: Int): String = columns[col]
+
+        fun delete(row: Int): File {
+            if (row >= rowCount)
+                return File.createTempFile("~tmp","tmp~")
+            val file = File(data[row][1] + File.separator + data[row][0])
+            data.removeAt(row)
+            fireTableDataChanged()
+            TableModel.delete(file)
+            return file
+        }
     }
 }

@@ -4,8 +4,8 @@ import gui.TableModel
 import javax.swing.*
 
 class FilesTab: JScrollPane() {
+    private val table = JTable(TableModel)
     init {
-        val table = JTable(TableModel)
         table.autoCreateRowSorter = true
         horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -19,6 +19,15 @@ class FilesTab: JScrollPane() {
                 2 -> 300
                 else -> 70
             }
+        }
+    }
+
+    fun delete(force: Boolean) {
+        table.selectedRows.forEach {
+            val real = table.convertRowIndexToModel(it)
+            val file = TableModel.delete(real)
+            if (force)
+                file.delete()
         }
     }
 }

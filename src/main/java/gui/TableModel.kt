@@ -58,4 +58,20 @@ object TableModel: AbstractTableModel() {
         changer.getFiles().forEach { data.add(fileToList(it)) }
         fireTableDataChanged()
     }
+
+    fun delete(row: Int): File {
+        if (row >= rowCount)
+            return File.createTempFile("~tmp","tmp~")
+        val file = File(data[row][2] as String + File.separator + data[row][0] as String)
+        data.removeAt(row)
+        fireTableDataChanged()
+        changer.removeFile(file)
+        return file
+    }
+
+    fun delete(file: File) {
+        data.removeIf { it[2] as String + File.separator + it[0] as String == file.absolutePath }
+        fireTableDataChanged()
+        changer.removeFile(file)
+    }
 }

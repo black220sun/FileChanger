@@ -9,8 +9,8 @@ import javax.swing.table.AbstractTableModel
 import java.io.File
 
 class TagsViewTab : JScrollPane() {
+    private val table = JTable(TagsModel)
     init {
-        val table = JTable(TagsModel())
         table.autoCreateRowSorter = true
         viewport.view = table
         val columns = table.columnModel
@@ -23,7 +23,16 @@ class TagsViewTab : JScrollPane() {
         }
     }
 
-    private class TagsModel : AbstractTableModel() {
+    fun delete(force: Boolean) {
+        table.selectedRows.forEach {
+            val real = table.convertRowIndexToModel(it)
+            val file = TagsModel.delete(real)
+            if (force)
+                file.delete()
+        }
+    }
+
+    private companion object TagsModel : AbstractTableModel() {
         val columns = arrayOf("File", "Title", "Artist", "Album", "Year", "№", "Genre")
                 .map { Settings.getLang(it) }
         val data = ArrayList<ArrayList<Any?>>()
@@ -39,6 +48,7 @@ class TagsViewTab : JScrollPane() {
             if (tags.isEmpty())
                 return
             list.add(file.name)
+            list.add(file.absolutePath)
             list.add(tags[tr.title])
             list.add(tags[tr.artist])
             list.add(tags[tr.album])
@@ -66,9 +76,25 @@ class TagsViewTab : JScrollPane() {
 
         override fun getRowCount(): Int = data.size
 
-        override fun getValueAt(row: Int, col: Int): Any = data[row][col] ?: ""
+        override fun getValueAt(row: Int, col: Int): Any {
+            val res = if (col == 0)
+                data[row][col]
+            else
+                data[row][col - 1]
+            return res ?: ""
+        }
 
         override fun getColumnClass(col: Int): Class<*> = getValueAt(0, col).javaClass
+
+        fun delete(row: Int): File {
+            if (row >= rowCount)
+                return File.createTempFile("~tmp","tmp~")
+            val file = File(data[row][1] as String)
+            data.removeAt(row)
+            fireTableDataChanged()
+            TableModel.delete(file)
+            return file
+        }
 
     }
 }

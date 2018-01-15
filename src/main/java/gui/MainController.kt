@@ -63,7 +63,7 @@ object MainController {
     }
 
     fun settings() {
-        val index = view.tabPanel.indexOfTab("Settings")
+        val index = view.tabPanel.indexOfTab(Settings.getLang("Settings"))
         if (index > 0)
             view.tabPanel.selectedIndex = index
         else
@@ -72,5 +72,26 @@ object MainController {
 
     fun tags(result: ArrayList<List<Any>>) {
         addTab(Settings.getLang("Results"), TagResultsTab(result))
+    }
+
+    fun delete(force: Boolean) {
+        val index = view.tabPanel.selectedIndex
+        when (index) {
+            view.tabPanel.indexOfTab(Settings.getLang("Files")) -> delFiles(index, force)
+            view.tabPanel.indexOfTab(Settings.getLang("Results")) -> delResults(index, force)
+            view.tabPanel.indexOfTab(Settings.getLang("Mp3 info")) -> delInfo(index, force)
+        }
+    }
+
+    private fun delResults(i: Int, force: Boolean) {
+        (view.tabPanel.getComponentAt(i) as ResultsTab).delete(force)
+    }
+
+    private fun delInfo(i: Int, force: Boolean) {
+        (view.tabPanel.getComponentAt(i) as TagsViewTab).delete(force)
+    }
+
+    private fun delFiles(i: Int, force: Boolean) {
+        (view.tabPanel.getComponentAt(i) as FilesTab).delete(force)
     }
 }

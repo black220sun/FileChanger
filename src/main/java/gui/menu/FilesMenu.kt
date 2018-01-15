@@ -46,6 +46,17 @@ class FilesMenu: LMenu("Files") {
         clear.addActionListener { TableModel.clear() }
         add(clear)
 
+        val deleteSelected = LMenuItem("Delete selected files")
+        deleteSelected.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE.toChar())
+        deleteSelected.setMnemonic('D')
+        deleteSelected.addActionListener { MainController.delete(false) }
+        add(deleteSelected)
+
+        val delete = LMenuItem("Delete from memory")
+        delete.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ActionEvent.CTRL_MASK)
+        delete.addActionListener { MainController.delete(true) }
+        add(delete)
+
         add(JSeparator())
 
         val save = LMenuItem("Save files")
