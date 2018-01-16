@@ -1,6 +1,7 @@
 package gui2
 
 import gui2.toolbar.ToolBar
+import mp3tag.TagReader
 import java.io.File
 import settings.Settings
 import java.awt.Dimension
@@ -19,13 +20,14 @@ object MainView : JFrame("Tag Changer"), WindowListener {
 
     private val model = FileModel()
     private val files = FileTree(File(Settings.home))
+    private val toolbar = ToolBar()
     init {
 //        jMenuBar = MenuBar()
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         preferredSize = Dimension(1000, 600)
 
         contentPane.layout = BoxLayout(contentPane, BoxLayout.Y_AXIS)
-        contentPane.add(ToolBar())
+        contentPane.add(toolbar)
         val panel = JPanel()
         panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
         panel.add(files)
@@ -89,4 +91,6 @@ object MainView : JFrame("Tag Changer"), WindowListener {
             selected.forEach { it.deleteRecursively() }
         files.update()
     }
+
+    fun fillTags(tags: TagReader.TagsData) = toolbar.fillTags(tags)
 }

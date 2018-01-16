@@ -44,6 +44,7 @@ class FileModel : AbstractTableModel() {
         row.add(tags.year())
         row.add(tags.track())
         row.add(tags.genre())
+        row.add(tags)
         row.add(file)
         data.add(row)
     }
@@ -71,18 +72,13 @@ class FileModel : AbstractTableModel() {
         fireTableDataChanged()
     }
 
+    fun getTags(row: Int): mp3tag.TagReader.TagsData = data[row][data[row].lastIndex - 1] as mp3tag.TagReader.TagsData
     override fun getRowCount(): Int = data.size
-
     override fun getColumnCount(): Int = columns.size
-
     override fun getValueAt(row: Int, col: Int): Any = try { data[row][col] ?: "" } catch (e: Exception) { "" }
-
     override fun getColumnClass(col: Int): Class<*> = getValueAt(0, col).javaClass
-
     override fun getColumnName(col: Int): String = columns[col]
-
-    override fun isCellEditable(row: Int, col: Int): Boolean = col == 0
-
+    override fun isCellEditable(row: Int, col: Int): Boolean = col == 0 || data[row][0] == true
     override fun setValueAt(value: Any?, row: Int, col: Int) {
         data[row][col] = value
         fireTableCellUpdated(row, col)
