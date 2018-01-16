@@ -61,9 +61,9 @@ class FileTree(dir: File) : JPanel() {
             val parent = (node as DefaultMutableTreeNode).userObject as File
             return DefaultMutableTreeNode(
                     if (Settings.showHidden())
-                        parent.listFiles { file -> file.isDirectory }[index]
+                        parent.listFiles { file -> file.isDirectory }.sorted()[index]
                     else
-                        parent.listFiles { file -> file.isDirectory && !file.isHidden }[index])
+                        parent.listFiles { file -> file.isDirectory && !file.isHidden }.sorted()[index])
         }
 
         fun update() = fireTreeStructureChanged(this, null, null, null)
