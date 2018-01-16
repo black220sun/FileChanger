@@ -45,8 +45,6 @@ class FileModel : AbstractTableModel() {
 
 
     fun saveFiles(path: String) {
-        if (data.isEmpty())
-            return
         val file = File(path)
         val dir = file.absoluteFile.parentFile
         if (!dir.exists())
