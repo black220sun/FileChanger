@@ -32,7 +32,6 @@ class FileModel : AbstractTableModel() {
         row.add(file.name)
         row.add(if (file.isDirectory) "dir" else file.extension)
         val tags = tr.readTags(file)
-        row.add(tags[tr.title])
         row.add(tags.title())
         row.add(tags.artist())
         row.add(tags.album())
