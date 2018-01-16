@@ -25,6 +25,14 @@ class FilesTab : JPanel() {
         comboBox.minimumSize = size
         add(comboBox)
 
+        val create = LIcon("createFolder.png")
+        create.addActionListener { MainView.createFolder() }
+        add(create)
+
+        val delete = LIcon("deleteFolder.png")
+        delete.addActionListener { MainView.deleteFolder() }
+        add(delete)
+
         val open = LIcon("open.png")
         open.addActionListener { MainView.addFiles() }
         add(open)

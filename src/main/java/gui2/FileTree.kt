@@ -2,6 +2,7 @@ package gui2
 
 import settings.Settings
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Dimension
 import java.io.File
 import javax.swing.*
@@ -24,9 +25,7 @@ class FileTree(dir: File) : JPanel() {
         maximumSize = Dimension(400, 1000)
 
         tree.scrollsOnExpand = true
-        val renderer = tree.cellRenderer as DefaultTreeCellRenderer
-        val icon = renderer.closedIcon
-        renderer.leafIcon = icon
+        tree.cellRenderer = Renderer()
     }
 
     fun getSelected(): List<File> {
@@ -36,6 +35,8 @@ class FileTree(dir: File) : JPanel() {
     fun setRoot(file: File) {
         tree.model = FileTreeModel(file)
     }
+
+    fun update() = (tree.model as FileTreeModel).update()
 
     private class FileTreeModel(dir: File) : DefaultTreeModel(DefaultMutableTreeNode(dir)) {
         override fun isLeaf(node: Any): Boolean {
@@ -63,6 +64,18 @@ class FileTree(dir: File) : JPanel() {
                         parent.listFiles { file -> file.isDirectory }[index]
                     else
                         parent.listFiles { file -> file.isDirectory && !file.isHidden }[index])
+        }
+
+        fun update() = fireTreeStructureChanged(this, null, null, null)
+    }
+
+    private class Renderer : DefaultTreeCellRenderer() {
+        init {
+            leafIcon = closedIcon
+        }
+        override fun getTreeCellRendererComponent(p0: JTree?, p1: Any, p2: Boolean, p3: Boolean, p4: Boolean, p5: Int, p6: Boolean): Component {
+            val file = (p1 as DefaultMutableTreeNode).userObject as File
+            return super.getTreeCellRendererComponent(p0, file.name, p2, p3, p4, p5, p6)
         }
     }
 }

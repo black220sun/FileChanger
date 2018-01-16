@@ -63,8 +63,30 @@ object MainView : JFrame("Tag Changer"), WindowListener {
     }
 
     fun addFiles() = files.getSelected().forEach { model.addDir(it) }
-
     fun clearFiles(selected: Boolean) = model.clear(selected)
     fun selectAll(state: Boolean) = model.selectAll(state)
     fun setRoot(file: File) = files.setRoot(file)
+    fun createFolder() {
+        val selected = files.getSelected()
+        if (selected.size != 1) {
+            JOptionPane.showMessageDialog(this, Settings.getLang("Choose exactly one parent folder"))
+            return
+        }
+        val name = JOptionPane.showInputDialog(this, Settings.getLang("Directory name:"))
+        if (name.isNullOrBlank())
+            return
+        val new = File(selected[0].absolutePath + File.separator + name)
+        new.mkdir()
+        files.update()
+    }
+
+    fun deleteFolder() {
+        val selected = files.getSelected()
+        if (selected.isEmpty())
+            return
+        if (JOptionPane.showConfirmDialog(this, Settings.getLang("Delete selected folders?"),
+                Settings.getLang("Confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+            selected.forEach { it.deleteRecursively() }
+        files.update()
+    }
 }
