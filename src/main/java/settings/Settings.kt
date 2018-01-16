@@ -13,6 +13,7 @@ object Settings {
     private val lang = Language()
     private val force = Force()
     private val saveLoad = SaveLoad()
+    val resources = directory + "res" + separator
     init {
         val dir = File(directory)
         if (dir.isFile) {

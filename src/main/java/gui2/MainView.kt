@@ -1,5 +1,6 @@
 package gui2
 
+import gui2.toolbar.ToolBar
 import java.io.File
 import settings.Settings
 import java.awt.Dimension
@@ -64,4 +65,6 @@ object MainView : JFrame("Tag Changer"), WindowListener {
     fun addFiles() = files.getSelected().forEach { model.addDir(it) }
 
     fun clearFiles(selected: Boolean) = model.clear(selected)
+    fun selectAll(state: Boolean) = model.selectAll(state)
+    fun setRoot(file: File) = files.setRoot(file)
 }

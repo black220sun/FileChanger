@@ -26,6 +26,12 @@ class FileModel : AbstractTableModel() {
         fireTableDataChanged()
     }
 
+
+    fun selectAll(state: Boolean) {
+        data.forEach { it[0] = state }
+        fireTableDataChanged()
+    }
+
     private fun addFile(file: File) {
         val row = ArrayList<Any?>()
         row.add(false)
