@@ -1,5 +1,5 @@
-import gui.MainController
+import gui2.MainView
 
 fun main(args: Array<String>) {
-    MainController.show()
+    MainView
 }

@@ -6,7 +6,7 @@ import javax.swing.JOptionPane
 object Settings {
     val separator = System.getProperty("file.separator")!!
     val csv = ","
-    private val home = System.getProperty("user.home")!!
+    val home = System.getProperty("user.home")!!
     private val directory = home + separator + ".FileChanger" + separator
     private val properties = HashMap<String, String>()
     private val settingsPath = directory + "settings"
@@ -89,4 +89,5 @@ object Settings {
     fun getSaveLoad(): Boolean = saveLoad.getSaveLoad()
     fun setSaveLoad(state: Boolean) = saveLoad.setSaveLoad(state)
     fun getSaveLoadPath(): String = saveLoad.getPath()
+    fun showHidden(): Boolean = properties.getOrPut("showHidden", {"false"}).toBoolean()
 }

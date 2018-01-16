@@ -18,6 +18,29 @@ object TagReader {
     enum class Encoding {
         ISO, UTF16LE, UTF16BE, UTF8
     }
+
+    class TagsData : HashMap<String, String>() {
+        fun title() = getOrDefault(title, "")
+        fun artist() = getOrDefault(artist, "")
+        fun album() = getOrDefault(album, "")
+        fun year(): Int {
+            val year = if (get("version") == "4")
+                getOrDefault(date, "")
+            else
+                getOrDefault(year, "")
+            return year.toIntOrNull() ?: 0
+        }
+        fun genre() = getOrDefault(genre, "")
+        fun track(): Int {
+            val num = getOrDefault(track, "")
+            return when {
+                num.matches(Regex("\\d+")) -> num.toInt()
+                num.matches(Regex("\\d+.+")) -> track.substring(0, track.indexOfFirst { it !in '0'..'9' }).toInt()
+                else -> 0
+            }
+        }
+    }
+
     private val defaultCharset = Encoding.UTF8
 
     init {
@@ -27,9 +50,9 @@ object TagReader {
         charsets.put(3, Charset.forName("UTF-8"))
     }
 
-    fun readTags(file: File): HashMap<String, String> {
-        val tags = HashMap<String, String>()
-        if (!file.exists())
+    fun readTags(file: File): TagsData {
+        val tags = TagsData()
+        if (!file.exists() || file.isDirectory)
             return tags
         val header = ByteArray(10)
         FileInputStream(file).use {
@@ -50,7 +73,7 @@ object TagReader {
         return tags
     }
 
-    fun writeTags(file: File, tags: HashMap<String, String>, charset: Encoding = defaultCharset) {
+    fun writeTags(file: File, tags: TagsData, charset: Encoding = defaultCharset) {
         if (!file.exists())
             return
         val num = charset.ordinal.toByte()
@@ -92,7 +115,7 @@ object TagReader {
 
     }
 
-    private fun FileInputStream.readFrame(total: Int, tags: HashMap<String, String>): Int {
+    private fun FileInputStream.readFrame(total: Int, tags: TagsData): Int {
         val header = ByteArray(10)
         if (read(header) == -1)
             return -1
