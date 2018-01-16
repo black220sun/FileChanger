@@ -48,7 +48,7 @@ class FileModel : AbstractTableModel() {
         val dir = file.absoluteFile.parentFile
         if (!dir.exists())
             dir.mkdirs()
-        FileWriter(file).use { writer -> data.forEach { writer.appendln((it[10] as File).absolutePath) } }
+        FileWriter(file).use { writer -> data.forEach { writer.appendln((it.last() as File).absolutePath) } }
     }
 
     fun loadFiles(path: String) {
