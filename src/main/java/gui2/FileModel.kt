@@ -88,4 +88,23 @@ class FileModel : AbstractTableModel() {
         data[row][col] = value
         fireTableCellUpdated(row, col)
     }
+
+    fun select(filter: List<String>, ext: Boolean) {
+        val regex = filter.map { Regex(it) }
+        val col = if (ext) 2 else 1
+        data.forEach { row ->
+            var flag = true
+            regex.forEach {
+                @Suppress("LABEL_NAME_CLASH")
+                if ((row[col] as String).matches(it)) {
+                    row[0] = true
+                    flag = false
+                    return@forEach
+                }
+            }
+            if (flag)
+                row[0] = false
+        }
+        fireTableDataChanged()
+    }
 }

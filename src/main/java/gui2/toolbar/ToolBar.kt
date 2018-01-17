@@ -14,6 +14,7 @@ class ToolBar : JTabbedPane() {
         maximumSize = preferredSize
 
         addTab("Files", FilesTab())
+        addTab("Filter", FilterTab())
         addTab("Replace", ReplaceTab(false))
         addTab("Translate", ReplaceTab(true))
         addTab("Tags", tagsTab)
