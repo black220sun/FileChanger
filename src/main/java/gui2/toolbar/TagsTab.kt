@@ -3,6 +3,7 @@ package gui2.toolbar
 import gui.util.LButton
 import gui.util.LCheckBox
 import gui.util.LLabel
+import gui.util.LRadioButton
 import mp3tag.TagReader
 import java.awt.GridLayout
 import javax.swing.*
@@ -39,17 +40,17 @@ class TagsTab : JScrollPane() {
         panel.add(select)
 
         val all = ButtonGroup()
-        val noneAll = JRadioButton("Don`t change")
+        val noneAll = LRadioButton("Don`t change")
         noneAll.addActionListener {
             if ((it.source as JRadioButton).isSelected)
                 caps.forEach { it.elements.toList()[0].isSelected = true }
         }
-        val firstAll = JRadioButton("First letter", true)
+        val firstAll = LRadioButton("First letter", true)
         firstAll.addActionListener {
             if ((it.source as JRadioButton).isSelected)
                 caps.forEach { it.elements.toList()[1].isSelected = true }
         }
-        val eachAll = JRadioButton("Each Letter")
+        val eachAll = LRadioButton("Each Letter")
         eachAll.addActionListener {
             if ((it.source as JRadioButton).isSelected)
                 caps.forEach { it.elements.toList()[2].isSelected = true }

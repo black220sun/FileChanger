@@ -26,11 +26,11 @@ class ConvertTab: JPanel() {
         panel.layout = GridLayout(3, 0)
         add(panel)
 
-        val title = LButton("Title")
+        val title = LButton("Title", " (%n)")
         title.addActionListener { pattern.insert("%n") }
         panel.add(title)
 
-        val artist = LButton("Artist")
+        val artist = LButton("Artist", " (%a)")
         artist.addActionListener { pattern.insert("%a") }
         panel.add(artist)
 
@@ -40,11 +40,11 @@ class ConvertTab: JPanel() {
         val ignore = LCheckBox("Ignore empty tags", true)
         panel.add(ignore)
 
-        val album = LButton("Album")
+        val album = LButton("Album", " (%m)")
         album.addActionListener { pattern.insert("%m") }
         panel.add(album)
 
-        val year = LButton("Year")
+        val year = LButton("Year", " (%y)")
         year.addActionListener { pattern.insert("%y") }
         panel.add(year)
 
@@ -58,11 +58,11 @@ class ConvertTab: JPanel() {
         }
         panel.add(tagName)
 
-        val track = LButton("Track")
+        val track = LButton("Track", " (%t)")
         track.addActionListener { pattern.insert("%t") }
         panel.add(track)
 
-        val genre = LButton("Genre")
+        val genre = LButton("Genre", " (%g)")
         genre.addActionListener { pattern.insert("%g") }
         panel.add(genre)
 
