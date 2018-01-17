@@ -25,7 +25,7 @@ class FileModel : AbstractTableModel() {
 
     fun clear(selected: Boolean = false) {
         if (selected)
-            data.removeIf { it[0] as Boolean }
+            data.removeIf { !(it[0] as Boolean) }
          else
             data.clear()
         fireTableDataChanged()
@@ -105,6 +105,43 @@ class FileModel : AbstractTableModel() {
             if (flag)
                 row[0] = false
         }
+        fireTableDataChanged()
+    }
+
+    fun save() {
+        data.filter { it[0] == true }
+                .forEach {
+                    val tags = it[it.lastIndex - 1] as tr.TagsData
+                    val lst = tags.toList()
+                    val real = it.subList(3, it.lastIndex - 1)
+                    val size = real.size
+                    var flag = false
+                    (0 until size).forEach {
+                        if (real[it] != lst[it]) {
+                            tags.index(it, real[it] ?: "")
+                            println("tags")
+                            flag = true
+                        }
+                    }
+                    val file = it.last() as File
+                    if (flag)
+                        tr.writeTags(file, tags)
+                    val new = it[1] as String
+                    var newFile = file
+                    if (new != file.name) {
+                        val tmp = File(file.absoluteFile.parentFile.absolutePath + File.separator + new)
+                        println("name: $new")
+                        if (file.renameTo(tmp)) {
+                            newFile = tmp
+                            println("file: $newFile")
+                            flag = true
+                        }
+                    }
+                    if (flag) {
+                        data.removeIf { it.last() == file }
+                        addFile(newFile)
+                    }
+                }
         fireTableDataChanged()
     }
 }

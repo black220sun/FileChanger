@@ -20,6 +20,8 @@ class FilterTab : JPanel() {
         val modelExt = TableModel("Extension", true)
         val tableName = JTable(modelName)
         val tableExt = JTable(modelExt)
+        tableName.columnModel.getColumn(0).maxWidth = 16
+        tableExt.columnModel.getColumn(0).maxWidth = 16
         val scrollName = JScrollPane(tableName)
         val panelName = JPanel()
         panelName.layout = BoxLayout(panelName, BoxLayout.Y_AXIS)
@@ -105,7 +107,7 @@ class FilterTab : JPanel() {
         }
 
         fun add() {
-            data.add(arrayListOf(false,""))
+            data.add(arrayListOf(!save,""))
             fireTableDataChanged()
         }
 

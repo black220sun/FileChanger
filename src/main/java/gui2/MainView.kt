@@ -98,4 +98,5 @@ object MainView : JFrame("Tag Changer"), WindowListener {
 
     fun fillTags(tags: TagReader.TagsData) = toolbar.fillTags(tags)
     fun select(filter: List<String>, ext: Boolean) = model.select(filter, ext)
+    fun save() = model.save()
 }

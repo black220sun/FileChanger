@@ -24,7 +24,7 @@ object TagReader {
         fun artist() = getOrDefault(artist, "")
         fun album() = getOrDefault(album, "")
         fun year(): Int {
-            val year = if (get("version") == "4")
+            val year = if (v4())
                 getOrDefault(date, "")
             else
                 getOrDefault(year, "")
@@ -39,9 +39,20 @@ object TagReader {
                 else -> 0
             }
         }
+        fun toList(): List<Any> = arrayListOf(title(), artist(), album(), year(), track(), genre())
+        fun index(i: Int, value: Any) {
+            val real = value.toString()
+            when (i) {
+                0 -> put(title, real)
+                1 -> put(artist, real)
+                2 -> put(album, real)
+                3 -> put(if (v4()) date else year, real)
+                4 -> put(track, real)
+                5 -> put(genre, real)
+            }
+        }
+        private fun v4(): Boolean = get("version") == "4"
     }
-
-    private val defaultCharset = Encoding.UTF8
 
     init {
         charsets.put(0, Charset.forName("ISO-8859-1"))
@@ -73,26 +84,24 @@ object TagReader {
         return tags
     }
 
-    fun writeTags(file: File, tags: TagsData, charset: Encoding = defaultCharset) {
+    fun writeTags(file: File, tags: TagsData) {
         if (!file.exists())
             return
-        val num = charset.ordinal.toByte()
         val header = ByteArray(10)
-        var total = 0
-        FileInputStream(file).use {
+        RandomAccessFile(file, "rw").use {
             if (it.read(header) == -1)
                 return
             if (String(header.copyOfRange(0, 3)) != tags["type"])
                 return
             if (header[3].toString() != tags["version"])
                 return
-            total = header[9] + (header[8] + (header[7] + header[6] * 128) * 128) * 128
-        }
-        RandomAccessFile(file, "rw").use {
+            var total = header[9] + (header[8] + (header[7] + header[6] * 128) * 128) * 128
+            it.seek(3)
+            it.writeByte(4)
             it.seek(10)
             tags.filter { it.key.matches(Regex("[A-Z0-9]{4}")) }.forEach {
                 key, value -> run {
-                val bytes = (value + 0.toChar()).toByteArray(charsets[num]!!)
+                val bytes = (value + 0.toChar()).toByteArray(charsets[3]!!)
                 var size = bytes.size + 1
                 total -= 10 + size
                 if (total < 0)
@@ -105,7 +114,7 @@ object TagReader {
                 it.write(key.toByteArray())
                 it.write(arr)
                 it.write(ByteArray(2))
-                it.write(ByteArray(1, { num }))
+                it.write(ByteArray(1, { 3 }))
                 it.write(bytes)
                 }
             }

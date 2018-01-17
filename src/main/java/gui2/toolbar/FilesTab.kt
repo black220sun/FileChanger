@@ -54,7 +54,7 @@ class FilesTab : JPanel() {
         add(cancelAll)
 
         val save = LIcon("save.png")
-        save.addActionListener { /*TODO(implement)*/ }
+        save.addActionListener { MainView.save() }
         add(save)
 
     }
