@@ -18,7 +18,12 @@ class FileModel : AbstractTableModel() {
         fireTableDataChanged()
     }
 
-    fun clear(selected: Boolean) {
+    fun showDir(dir: File) {
+        data.clear()
+        addDir(dir)
+    }
+
+    fun clear(selected: Boolean = false) {
         if (selected)
             data.removeIf { it[0] as Boolean }
          else

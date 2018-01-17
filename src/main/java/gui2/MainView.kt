@@ -64,7 +64,11 @@ object MainView : JFrame("Tag Changer"), WindowListener {
         dispose()
     }
 
-    fun addFiles() = files.getSelected().forEach { model.addDir(it) }
+    fun show(dir: File) = model.showDir(dir)
+    fun addFiles() {
+        model.clear(false)
+        files.getSelected().forEach { model.addDir(it) }
+    }
     fun clearFiles(selected: Boolean) = model.clear(selected)
     fun selectAll(state: Boolean) = model.selectAll(state)
     fun setRoot(file: File) = files.setRoot(file)

@@ -26,6 +26,12 @@ class FileTree(dir: File) : JPanel() {
 
         tree.scrollsOnExpand = true
         tree.cellRenderer = Renderer()
+
+        tree.addTreeSelectionListener {
+            val path = it.newLeadSelectionPath ?: return@addTreeSelectionListener
+            val file = (path.lastPathComponent as DefaultMutableTreeNode).userObject as File
+            MainView.show(file)
+        }
     }
 
     fun getSelected(): List<File> {
@@ -36,7 +42,7 @@ class FileTree(dir: File) : JPanel() {
         tree.model = FileTreeModel(file)
     }
 
-    fun update() = (tree.model as FileTreeModel).update()
+    fun update() = (tree.model as FileTreeModel).reload()
 
     private class FileTreeModel(dir: File) : DefaultTreeModel(DefaultMutableTreeNode(dir)) {
         override fun isLeaf(node: Any): Boolean {
@@ -65,8 +71,6 @@ class FileTree(dir: File) : JPanel() {
                     else
                         parent.listFiles { file -> file.isDirectory && !file.isHidden }.sorted()[index])
         }
-
-        fun update() = fireTreeStructureChanged(this, null, null, null)
     }
 
     private class Renderer : DefaultTreeCellRenderer() {
