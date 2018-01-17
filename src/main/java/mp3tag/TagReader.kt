@@ -23,22 +23,12 @@ object TagReader {
         fun title() = getOrDefault(title, "")
         fun artist() = getOrDefault(artist, "")
         fun album() = getOrDefault(album, "")
-        fun year(): Int {
-            val year = if (v4())
+        fun year() = if (v4())
                 getOrDefault(date, "")
             else
                 getOrDefault(year, "")
-            return year.toIntOrNull() ?: 0
-        }
         fun genre() = getOrDefault(genre, "")
-        fun track(): Int {
-            val num = getOrDefault(track, "")
-            return when {
-                num.matches(Regex("\\d+")) -> num.toInt()
-                num.matches(Regex("\\d+.+")) -> track.substring(0, track.indexOfFirst { it !in '0'..'9' }).toInt()
-                else -> 0
-            }
-        }
+        fun track() = getOrDefault(track, "")
         fun toList(): List<Any> = arrayListOf(title(), artist(), album(), year(), track(), genre())
         fun index(i: Int, value: Any) {
             val real = value.toString()
