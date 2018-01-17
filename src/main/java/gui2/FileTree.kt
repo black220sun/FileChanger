@@ -22,7 +22,7 @@ class FileTree(dir: File) : JPanel() {
 
         preferredSize = Dimension(300, 600)
         minimumSize = Dimension(200, 0)
-        maximumSize = Dimension(400, 1000)
+        maximumSize = Dimension(300, 1000)
 
         tree.scrollsOnExpand = true
         tree.cellRenderer = Renderer()

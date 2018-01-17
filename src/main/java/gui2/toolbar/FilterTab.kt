@@ -16,7 +16,7 @@ import javax.swing.table.AbstractTableModel
 class FilterTab : JPanel() {
     init {
         layout = BoxLayout(this, BoxLayout.X_AXIS)
-        val modelName = TableModel("Name", false)
+        val modelName = TableModel("File", false)
         val modelExt = TableModel("Extension", true)
         val tableName = JTable(modelName)
         val tableExt = JTable(modelExt)

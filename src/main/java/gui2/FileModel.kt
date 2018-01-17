@@ -8,7 +8,8 @@ import java.io.FileReader
 import java.io.FileWriter
 
 class FileModel : AbstractTableModel() {
-    private val columns = arrayOf("", "File", "Type", "Title", "Artist", "Album", "Year", "№", "Genre").map { Settings.getLang(it) }
+    private val startTags: Int = 5
+    private val columns = arrayOf("", "File", "Type", "Size", "Tags", "Title", "Artist", "Album", "Year", "№", "Genre").map { Settings.getLang(it) }
     private val data = ArrayList<ArrayList<Any?>>()
 
     fun addDir(file: File) {
@@ -37,12 +38,15 @@ class FileModel : AbstractTableModel() {
         fireTableDataChanged()
     }
 
-    private fun addFile(file: File) {
+    private fun addFile(file: File, selected: Boolean = false) {
         val row = ArrayList<Any?>()
-        row.add(false)
+        row.add(selected)
         row.add(file.name)
         row.add(if (file.isDirectory) "dir" else file.extension)
+        val size = file.length()
+        row.add(size)
         val tags = tr.readTags(file)
+        row.add(tags.tagSize())
         row.add(tags.title())
         row.add(tags.artist())
         row.add(tags.album())
@@ -91,12 +95,19 @@ class FileModel : AbstractTableModel() {
 
     fun select(filter: List<String>, ext: Boolean) {
         val regex = filter.map { Regex(it) }
-        val col = if (ext) 2 else 1
+        if (ext)
+            selectExt(regex)
+        else
+            selectName(regex)
+        fireTableDataChanged()
+    }
+
+    private fun selectName(regex: List<Regex>) {
         data.forEach { row ->
             var flag = true
             regex.forEach {
                 @Suppress("LABEL_NAME_CLASH")
-                if ((row[col] as String).matches(it)) {
+                if ((row.last() as File).nameWithoutExtension.matches(it)) {
                     row[0] = true
                     flag = false
                     return@forEach
@@ -105,7 +116,22 @@ class FileModel : AbstractTableModel() {
             if (flag)
                 row[0] = false
         }
-        fireTableDataChanged()
+    }
+
+    private fun selectExt(regex: List<Regex>) {
+        data.forEach { row ->
+            var flag = true
+            regex.forEach {
+                @Suppress("LABEL_NAME_CLASH")
+                if ((row[2] as String).matches(it)) {
+                    row[0] = true
+                    flag = false
+                    return@forEach
+                }
+            }
+            if (flag)
+                row[0] = false
+        }
     }
 
     fun save() {
@@ -113,13 +139,12 @@ class FileModel : AbstractTableModel() {
                 .forEach {
                     val tags = it[it.lastIndex - 1] as tr.TagsData
                     val lst = tags.toList()
-                    val real = it.subList(3, it.lastIndex - 1)
+                    val real = it.subList(startTags, it.lastIndex - 1)
                     val size = real.size
                     var flag = false
                     (0 until size).forEach {
                         if (real[it] != lst[it]) {
                             tags.index(it, real[it] ?: "")
-                            println("tags")
                             flag = true
                         }
                     }
@@ -130,18 +155,21 @@ class FileModel : AbstractTableModel() {
                     var newFile = file
                     if (new != file.name) {
                         val tmp = File(file.absoluteFile.parentFile.absolutePath + File.separator + new)
-                        println("name: $new")
                         if (file.renameTo(tmp)) {
                             newFile = tmp
-                            println("file: $newFile")
                             flag = true
                         }
                     }
                     if (flag) {
                         data.removeIf { it.last() == file }
-                        addFile(newFile)
+                        addFile(newFile, true)
                     }
                 }
+        fireTableDataChanged()
+    }
+
+    fun invert() {
+        data.forEach { it[0] = !(it[0] as Boolean) }
         fireTableDataChanged()
     }
 }

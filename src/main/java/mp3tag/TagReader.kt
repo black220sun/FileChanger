@@ -20,6 +20,7 @@ object TagReader {
     }
 
     class TagsData : HashMap<String, String>() {
+        fun tagSize() = getOrDefault("size", "0").toInt()
         fun title() = getOrDefault(title, "")
         fun artist() = getOrDefault(artist, "")
         fun album() = getOrDefault(album, "")
