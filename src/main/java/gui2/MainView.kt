@@ -21,6 +21,7 @@ object MainView : JFrame("Tag Changer"), WindowListener {
     private val model = FileModel()
     private val files = FileTree(File(Settings.home))
     private val toolbar = ToolBar()
+    private val table = FileTable(model)
     init {
 //        jMenuBar = MenuBar()
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
@@ -31,13 +32,14 @@ object MainView : JFrame("Tag Changer"), WindowListener {
         val panel = JPanel()
         panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
         panel.add(files)
-        panel.add(TableView(FileTable(model)))
+        panel.add(TableView(table))
         contentPane.add(panel)
 
         pack()
         addWindowListener(this)
         load()
         isVisible = true
+        extendedState = JFrame.MAXIMIZED_BOTH
     }
 
     fun close() {
@@ -55,11 +57,13 @@ object MainView : JFrame("Tag Changer"), WindowListener {
         if (Settings.getSaveLoad()) {
             model.loadFiles(Settings.getSaveLoadPath())
         }
+        table.load()
     }
 
     private fun quit() {
         if (Settings.getSaveLoad())
             model.saveFiles(Settings.getSaveLoadPath())
+        table.save()
         Settings.saveLang()
         dispose()
     }
