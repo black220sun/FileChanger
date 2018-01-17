@@ -14,6 +14,7 @@ object Settings {
     private val force = Force()
     private val saveLoad = SaveLoad()
     val resources = directory + "res" + separator
+    val defaultCharset = lang.defaultCharset
     init {
         val dir = File(directory)
         if (dir.isFile) {
@@ -43,7 +44,7 @@ object Settings {
         if (!file.exists() || !file.isFile)
             return
 //        val reader = FileReader(file)
-        val reader = InputStreamReader(file.inputStream(), lang.defaultCharset)
+        val reader = InputStreamReader(file.inputStream(), defaultCharset)
         reader.readLines()
                 .filter { it.matches("[^$csv]+$csv[^$csv]+".toRegex()) }
                 .forEach {

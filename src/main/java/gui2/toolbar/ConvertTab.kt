@@ -3,6 +3,7 @@ package gui2.toolbar
 import gui.util.LButton
 import gui.util.LCheckBox
 import gui.util.LLabel
+import gui.util.LPattern
 import settings.Settings
 import java.awt.GridLayout
 import javax.swing.BoxLayout
@@ -16,7 +17,9 @@ class ConvertTab: JPanel() {
         label.toolTipText = Settings.getLang("%n - title; %a - artist; %m - album; %y - year; %t - track; %g - genre")
         add(label)
 
-        val pattern = JTextField()
+        val patterns = LPattern()
+
+        val pattern = JTextField(patterns.selectedItem as String? ?: "")
         add(pattern)
 
         val panel = JPanel()
@@ -24,27 +27,30 @@ class ConvertTab: JPanel() {
         add(panel)
 
         val title = LButton("Title")
-        title.addActionListener { pattern.text += "%n" }
+        title.addActionListener { pattern.insert("%n") }
         panel.add(title)
 
         val artist = LButton("Artist")
-        artist.addActionListener { pattern.text += "%a" }
+        artist.addActionListener { pattern.insert("%a") }
         panel.add(artist)
 
-        panel.add(LLabel(""))
+        patterns.addActionListener { pattern.text = patterns.selectedItem as String }
+        panel.add(patterns)
 
         val ignore = LCheckBox("Ignore empty tags", true)
         panel.add(ignore)
 
         val album = LButton("Album")
-        album.addActionListener { pattern.text += "%m" }
+        album.addActionListener { pattern.insert("%m") }
         panel.add(album)
 
         val year = LButton("Year")
-        year.addActionListener { pattern.text += "%y" }
+        year.addActionListener { pattern.insert("%y") }
         panel.add(year)
 
-        panel.add(LLabel(""))
+        val save = LButton("Save")
+        save.addActionListener { patterns.addText(pattern.text) }
+        panel.add(save)
 
         val tagName = LButton("Tags to name")
         tagName.addActionListener {
@@ -53,19 +59,28 @@ class ConvertTab: JPanel() {
         panel.add(tagName)
 
         val track = LButton("Track")
-        track.addActionListener { pattern.text += "%t" }
+        track.addActionListener { pattern.insert("%t") }
         panel.add(track)
 
         val genre = LButton("Genre")
-        genre.addActionListener { pattern.text += "%g" }
+        genre.addActionListener { pattern.insert("%g") }
         panel.add(genre)
 
-        panel.add(LLabel(""))
+        val remove = LButton("Remove")
+        remove.addActionListener { patterns.removeText() }
+        panel.add(remove)
 
         val nameTag = LButton("Name to tags")
         nameTag.addActionListener {
 
         }
         panel.add(nameTag)
+    }
+
+    private fun JTextField.insert(s: String) {
+        val index = caretPosition
+        text = text.substring(0, index) + s + text.substring(index)
+        caretPosition = index + s.length
+        requestFocus()
     }
 }
