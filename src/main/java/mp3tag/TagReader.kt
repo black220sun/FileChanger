@@ -15,6 +15,7 @@ object TagReader {
     val genre = "TCON"
     val year = "TYER"
     val date = "TDRC"
+    val comment = "COMM"
     enum class Encoding {
         ISO, UTF16LE, UTF16BE, UTF8
     }
@@ -30,7 +31,8 @@ object TagReader {
                 getOrDefault(year, "")
         fun genre() = getOrDefault(genre, "")
         fun track() = getOrDefault(track, "")
-        fun toList(): List<Any> = arrayListOf(title(), artist(), album(), year(), track(), genre())
+        fun comment() = getOrDefault(comment, "")
+        fun toList(): List<Any> = arrayListOf(title(), artist(), album(), year(), track(), genre(), comment())
         fun index(i: Int, value: Any) {
             val real = value.toString()
             when (i) {
@@ -40,6 +42,7 @@ object TagReader {
                 3 -> put(if (v4()) date else year, real)
                 4 -> put(track, real)
                 5 -> put(genre, real)
+                6 -> put(comment, real)
             }
         }
         private fun v4(): Boolean = get("version") == "4"
@@ -123,11 +126,12 @@ object TagReader {
             return -1
         }
         val name = String(header.copyOfRange(0, 4))
-        if (!name.matches(Regex("[A-Z0-9]{4}")))
-            return -1
         val size = header[7] + (header[6] + (header[5] + header[4] * 128) * 128) * 128
-        if (size < 0)
+        if (size <= 0)
             return -1
+        if (!name.matches(Regex("[A-Z0-9]{4}"))) {
+            return total - 10 - size
+        }
         val value = ByteArray(size)
         read(value)
         val text = getText(value)
@@ -152,6 +156,6 @@ object TagReader {
         return if (cyrillicText.matches(regex))
             cyrillicText
         else
-            ""
+            text
     }
 }

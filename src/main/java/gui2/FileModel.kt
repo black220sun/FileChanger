@@ -9,7 +9,8 @@ import java.io.FileWriter
 
 class FileModel : AbstractTableModel() {
     private val startTags: Int = 5
-    private val columns = arrayOf("", "File", "Type", "Size", "Tags", "Title", "Artist", "Album", "Year", "№", "Genre").map { Settings.getLang(it) }
+    private val columns = arrayOf("", "File", "Type", "Size", "Tags",
+            "Title", "Artist", "Album", "Year", "№", "Genre", "Comment").map { Settings.getLang(it) }
     private val data = ArrayList<ArrayList<Any?>>()
 
     fun addDir(file: File) {
@@ -53,6 +54,7 @@ class FileModel : AbstractTableModel() {
         row.add(tags.year())
         row.add(tags.track())
         row.add(tags.genre())
+        row.add(tags.comment())
         row.add(tags)
         row.add(file)
         data.add(row)
@@ -87,7 +89,12 @@ class FileModel : AbstractTableModel() {
     override fun getValueAt(row: Int, col: Int): Any = try { data[row][col] ?: "" } catch (e: Exception) { "" }
     override fun getColumnClass(col: Int): Class<*> = getValueAt(0, col).javaClass
     override fun getColumnName(col: Int): String = columns[col]
-    override fun isCellEditable(row: Int, col: Int): Boolean = col == 0 || data[row][0] == true
+    override fun isCellEditable(row: Int, col: Int): Boolean =
+            when {
+                col == 0 -> true
+                columns[col] in arrayOf("Type", "Size", "Tags").map { Settings.getLang(it) } -> false
+                else -> data[row][0] as Boolean
+            }
     override fun setValueAt(value: Any?, row: Int, col: Int) {
         data[row][col] = value
         fireTableCellUpdated(row, col)

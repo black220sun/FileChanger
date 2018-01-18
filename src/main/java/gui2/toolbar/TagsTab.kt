@@ -15,6 +15,7 @@ class TagsTab : JScrollPane() {
     private val year = JTextField()
     private val track = JTextField()
     private val genre = JTextField()
+    private val comment = JTextField()
     private val tagFields = ArrayList<JTextField>()
     private val enables = ArrayList<JCheckBox>()
     private val caps = ArrayList<ButtonGroup>()
@@ -119,6 +120,14 @@ class TagsTab : JScrollPane() {
         enables.add(bGenre)
         panel.group()
 
+        panel.add(LLabel("Comment"))
+        panel.add(comment)
+        val bComment = JCheckBox()
+        panel.add(bComment)
+        tagFields.add(comment)
+        enables.add(bComment)
+        panel.group()
+
         tagFields.forEach { it.isEnabled = false }
         (0 until tagFields.size).forEach { i ->
             enables[i].addActionListener { tagFields[i].isEnabled = (it.source as JCheckBox).isSelected }
@@ -129,9 +138,10 @@ class TagsTab : JScrollPane() {
         title.text = tags.title()
         artist.text = tags.artist()
         album.text = tags.album()
-        year.text = tags.year().toString()
+        year.text = tags.year()
         genre.text = tags.genre()
-        track.text = tags.track().toString()
+        track.text = tags.track()
+        comment.text = tags.comment()
     }
 
     private fun JPanel.group() {
