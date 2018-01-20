@@ -1,54 +1,19 @@
 package gui2
 
-import gui.util.LMenuItem
+import gui.util.EditPopup
 import settings.Settings
 import settings.Settings.csv
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
+import java.awt.Font
 import java.io.FileWriter
 import java.io.File
 import java.io.FileReader
-import javax.swing.JPopupMenu
+import javax.swing.DefaultCellEditor
 import javax.swing.JTable
 import javax.swing.ListSelectionModel
 import javax.swing.table.TableModel
+import javax.swing.text.JTextComponent
 
-class FileTable(model: TableModel) : JTable(model), MouseListener {
-    override fun mouseReleased(p0: MouseEvent?) = Unit
-
-    override fun mouseEntered(p0: MouseEvent) = Unit
-
-    override fun mouseClicked(p0: MouseEvent) = Unit
-
-    override fun mouseExited(p0: MouseEvent) = Unit
-
-    override fun mousePressed(e: MouseEvent) {
-        if (e.button != MouseEvent.BUTTON3)
-            return
-        val point = e.point
-        val col = columnAtPoint(point)
-        if (col > columnCount)
-            return
-        val row = rowAtPoint(point)
-        if (row > rowCount)
-            return
-        val edit = isCellEditable(row, col)
-        val popUp = JPopupMenu()
-
-        val cut = LMenuItem("Cut")
-        cut.isEnabled = edit
-        popUp.add(cut)
-
-        val copy = LMenuItem("Copy")
-        popUp.add(copy)
-
-        val paste = LMenuItem("Paste")
-        paste.isEnabled = edit
-        popUp.add(paste)
-
-        popUp.show(this, point.x, point.y)
-    }
-
+class FileTable(model: TableModel) : JTable(model) {
     private val path = Settings.getDirectory() + "order"
     private val tcm = TableColumnManager(this)
     init {
@@ -62,7 +27,13 @@ class FileTable(model: TableModel) : JTable(model), MouseListener {
             val tags = model.getTags(convertRowIndexToModel(lsm.leadSelectionIndex))
             MainView.fillTags(tags)
         }
-        addMouseListener(this)
+        val fontSize = Settings.getSize("sizeFont") ?: 12
+        font = Font("Dialog", Font.PLAIN, fontSize)
+        val rowSize = Settings.getSize("sizeRow") ?: 14
+        setRowHeight(if (rowSize > fontSize) rowSize else fontSize + 1)
+
+        val comp = (getDefaultEditor(Object().javaClass) as DefaultCellEditor).component as JTextComponent
+        comp.componentPopupMenu = EditPopup(comp)
     }
 
     fun save() {

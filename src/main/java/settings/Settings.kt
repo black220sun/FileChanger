@@ -5,7 +5,7 @@ import javax.swing.JOptionPane
 
 object Settings {
     val separator = System.getProperty("file.separator")!!
-    val csv = ","
+    const val csv = ","
     val home = System.getProperty("user.home")!!
     private val directory = home + separator + ".FileChanger" + separator
     private val properties = HashMap<String, String>()
@@ -13,6 +13,7 @@ object Settings {
     private val lang = Language()
     private val force = Force()
     private val saveLoad = SaveLoad()
+    private val size = SizeResolver()
     val resources = directory + "res" + separator
     val defaultCharset = lang.defaultCharset
     init {
@@ -71,15 +72,9 @@ object Settings {
 
     fun getProperty(key: String): String? = properties[key]
 
-    fun setProperty(key: String, value: String) {
-        if (check(key))
-            properties.put(key, value)
-    }
+    fun setProperty(key: String, value: String) = properties.put(key, value)
 
     fun getDirectory(): String = directory
-
-    //TODO(implement check for key change availability)
-    private fun check(key: String) : Boolean = true
 
     fun getLang(key: String): String = lang.getLang(key)
     fun getLanguages(): Array<String> = lang.getLanguages()
@@ -92,4 +87,6 @@ object Settings {
     fun setSaveLoad(state: Boolean) = saveLoad.setSaveLoad(state)
     fun getSaveLoadPath(): String = saveLoad.getPath()
     fun showHidden(): Boolean = properties.getOrPut("showHidden", {"false"}).toBoolean()
+    fun getSize(key: String): Int? = size.getSize(key)
+    fun setSize(key: String, value: Int) = size.setSize(key, value)
 }
