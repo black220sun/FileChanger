@@ -20,9 +20,8 @@ class FileTree(dir: File) : JPanel() {
         scroll.viewport.add(tree)
         add(BorderLayout.CENTER, scroll)
 
-        preferredSize = Dimension(300, 600)
-        minimumSize = Dimension(200, 0)
-        maximumSize = Dimension(300, 1000)
+//        preferredSize = Dimension(300, 400)
+        minimumSize = Dimension(0, 0)
 
         tree.scrollsOnExpand = true
         tree.cellRenderer = Renderer()

@@ -27,13 +27,9 @@ object MainView : JFrame("Tag Changer"), WindowListener {
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         preferredSize = Dimension(1000, 600)
 
-        contentPane.layout = BoxLayout(contentPane, BoxLayout.Y_AXIS)
-        contentPane.add(toolbar)
-        val panel = JPanel()
-        panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
-        panel.add(files)
-        panel.add(TableView(table))
-        contentPane.add(panel)
+        val panel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, files, TableView(table))
+        panel.isOneTouchExpandable = true
+        contentPane = JSplitPane(JSplitPane.VERTICAL_SPLIT, toolbar, panel)
 
         pack()
         addWindowListener(this)

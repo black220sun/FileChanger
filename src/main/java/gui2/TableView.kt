@@ -6,6 +6,6 @@ import javax.swing.JTable
 
 class TableView(table: JTable) : JScrollPane(table) {
     init {
-        maximumSize = Dimension(2000, 1000)
+        minimumSize = Dimension(600, 400)
     }
 }

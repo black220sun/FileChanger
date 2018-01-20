@@ -13,9 +13,7 @@ class ToolBar : JPanel() {
     private val tabs = JTabbedPane()
     init {
         layout = BoxLayout(this, BoxLayout.X_AXIS)
-        preferredSize = Dimension(2000,160)
-        minimumSize = preferredSize
-        maximumSize = preferredSize
+        minimumSize = Dimension(600, 140)
 
         add(FilesTab())
         add(tabs)

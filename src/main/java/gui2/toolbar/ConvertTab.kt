@@ -8,23 +8,26 @@ import settings.Settings
 import java.awt.GridLayout
 import javax.swing.BoxLayout
 import javax.swing.JPanel
+import javax.swing.JScrollPane
 import javax.swing.JTextField
 
-class ConvertTab: JPanel() {
+class ConvertTab: JScrollPane() {
     init {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
+        val tab = JPanel()
+        tab.layout = BoxLayout(tab, BoxLayout.Y_AXIS)
         val label = LLabel("Pattern:")
         label.toolTipText = Settings.getLang("%n - title; %a - artist; %m - album; %y - year; %t - track; %g - genre")
-        add(label)
+        tab.add(label)
+        viewport.view = tab
 
         val patterns = LPattern()
 
         val pattern = JTextField(patterns.selectedItem as String? ?: "")
-        add(pattern)
+        tab.add(pattern)
 
         val panel = JPanel()
         panel.layout = GridLayout(3, 0)
-        add(panel)
+        tab.add(panel)
 
         val title = LButton("Title", " (%n)")
         title.addActionListener { pattern.insert("%n") }

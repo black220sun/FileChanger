@@ -18,7 +18,7 @@ class FilesTab : JPanel() {
 
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         preferredSize = Dimension(160, 160)
-        minimumSize = preferredSize
+        minimumSize = Dimension(160, 120)
         maximumSize = preferredSize
 
         val roots = File.listRoots() + File(Settings.home)
